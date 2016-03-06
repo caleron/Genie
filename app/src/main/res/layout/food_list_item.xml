@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground">
+
+    <TextView
+        android:id="@+id/titleText"
+        style="@style/DarkTextStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_toStartOf="@+id/add_common_pack_button"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="@dimen/large_padding"
+        android:text="Mehl 300g"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Button
+        android:id="@+id/add_common_pack_button"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/titleText"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:text="+"
+        android:textColor="@color/secondaryTextColor"
+        android:textSize="25sp" />
+
+</RelativeLayout>

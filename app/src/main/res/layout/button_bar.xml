@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?android:attr/buttonBarStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="bottom"
+    android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/cancel_button"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="start|center_vertical"
+        android:paddingLeft="@dimen/button_bar_padding"
+        android:paddingRight="@dimen/button_bar_padding"
+        android:text="@string/cancel" />
+
+    <Button
+        android:id="@+id/save_button"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="end|center_vertical"
+        android:paddingLeft="@dimen/button_bar_padding"
+        android:paddingRight="@dimen/button_bar_padding"
+        android:text="@string/save" />
+
+</LinearLayout>
+    

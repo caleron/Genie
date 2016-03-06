@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="de.teyzer.genie.ui.NewProductActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <Spinner
+            android:id="@+id/food_type_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:spinnerMode="dialog"/>
+
+        <EditText
+            android:id="@+id/name_text_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/food_type_spinner"
+            android:hint="@string/name"
+            android:inputType="textAutoComplete" />
+
+        <EditText
+            android:id="@+id/store_text_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/name_text_box"
+            android:ems="10"
+            android:hint="@string/store"
+            android:inputType="textAutoComplete" />
+
+        <TextView
+            android:id="@+id/new_product_pack_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/store_text_box"
+            android:text="Packungsgröße"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/new_product_pack_size"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/new_product_pack_label"
+            android:ems="10"
+            android:inputType="numberDecimal" />
+
+        <TextView
+            android:id="@+id/new_product_unit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/new_product_pack_size"
+            android:layout_toEndOf="@+id/new_product_pack_size"
+            android:text="Gramm"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    </RelativeLayout>
+
+</ScrollView>

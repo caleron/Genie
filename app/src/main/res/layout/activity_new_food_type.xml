@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollView"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_alignParentStart="true"
+    tools:context="de.teyzer.genie.ui.NewFoodTypeActivity">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/medium_padding">
+
+        <EditText
+            android:id="@+id/name_text_box"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:hint="@string/name"
+            android:inputType="textAutoComplete" />
+
+        <TextView
+            android:id="@+id/quantity_type_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/name_text_box"
+            android:layout_below="@+id/name_text_box"
+            android:text="@string/quantity_type"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Spinner
+            android:id="@+id/quantity_type_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignStart="@+id/quantity_type_label"
+            android:layout_below="@+id/quantity_type_label" />
+
+        <TextView
+            android:id="@+id/preferred_meal_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/quantity_type_spinner"
+            android:text="@string/preferred_meal_question"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Spinner
+            android:id="@+id/preferred_meal_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignStart="@+id/preferred_meal_label"
+            android:layout_below="@+id/preferred_meal_label" />
+
+        <TextView
+            android:id="@+id/pack_size_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/preferred_meal_spinner"
+            android:layout_below="@+id/preferred_meal_spinner"
+            android:text="@string/common_pack_size"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <EditText
+            android:id="@+id/pack_size_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/pack_size_label"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:text="10" />
+
+        <TextView
+            android:id="@+id/pack_size_unit_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/pack_size_box"
+            android:layout_toEndOf="@+id/pack_size_box"
+            android:labelFor="@+id/pack_size_box"
+            android:text="Gramm"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+
+        <TextView
+            android:id="@+id/current_quantity_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/pack_size_box"
+            android:text="Aktuell vorhanden"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+
+        <EditText
+            android:id="@+id/current_quantity_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_below="@+id/current_quantity_label"
+            android:ems="10"
+            android:inputType="numberDecimal"
+            android:text="10" />
+
+        <TextView
+            android:id="@+id/current_quantity_unit_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/current_quantity_box"
+            android:layout_toEndOf="@+id/current_quantity_box"
+            android:labelFor="@+id/current_quantity_box"
+            android:text="Gramm"
+            android:textAppearance="?android:attr/textAppearanceSmall" />
+    </RelativeLayout>
+
+</ScrollView>
+
