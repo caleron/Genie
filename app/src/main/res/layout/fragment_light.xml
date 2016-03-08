@@ -1,0 +1,180 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/medium_padding"
+        tools:context="de.teyzer.genie.ui.LightFragment">
+
+        <TextView
+            android:id="@+id/light_white_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:text="Weißes Licht"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <SeekBar
+            android:id="@+id/light_white_seekbar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/light_white_label"
+            android:layout_toEndOf="@+id/light_white_label"
+            android:max="100"
+            android:paddingTop="2dp" />
+
+        <View
+            android:id="@+id/spacer"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            android:layout_below="@id/light_white_label" />
+
+        <TextView
+            android:id="@+id/light_rgb_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/light_white_label"
+            android:layout_below="@+id/spacer"
+            android:paddingBottom="@dimen/medium_padding"
+            android:text="Farbiges Licht"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+        <Switch
+            android:id="@+id/light_rgb_manually_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignEnd="@+id/light_white_seekbar"
+            android:layout_below="@+id/spacer"
+            android:text="Manuell regeln" />
+
+        <RelativeLayout
+            android:id="@+id/light_color_manually_box"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/light_rgb_label">
+
+            <RadioGroup
+                android:id="@+id/light_color_choose_mode_radio_group"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_gravity="center"
+                android:orientation="horizontal">
+
+                <RadioButton
+                    android:id="@+id/light_color_rgb_mode_radio_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Einzelne Farbkanäle" />
+
+                <RadioButton
+                    android:id="@+id/light_color_picker_mode_radio_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Farbwähler" />
+            </RadioGroup>
+
+
+            <RelativeLayout
+                android:id="@+id/light_rgb_mode_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/light_color_choose_mode_radio_group">
+
+                <TextView
+                    android:id="@+id/light_red_label"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:padding="@dimen/small_padding"
+                    android:text="Rot:"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+                <SeekBar
+                    android:id="@+id/light_red_seekbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignTop="@id/light_red_label"
+                    android:layout_toEndOf="@+id/light_red_label"
+                    android:max="255"
+                    android:paddingTop="@dimen/small_padding" />
+
+                <TextView
+                    android:id="@+id/light_green_label"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/light_red_label"
+                    android:layout_below="@+id/light_red_label"
+                    android:padding="@dimen/small_padding"
+                    android:text="Grün:"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+                <SeekBar
+                    android:id="@+id/light_green_seekbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignTop="@id/light_green_label"
+                    android:layout_toEndOf="@id/light_green_label"
+                    android:max="255"
+                    android:paddingTop="@dimen/small_padding" />
+
+                <TextView
+                    android:id="@+id/light_blue_label"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignStart="@+id/light_green_label"
+                    android:layout_below="@+id/light_green_label"
+                    android:padding="@dimen/small_padding"
+                    android:text="Blau:"
+                    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+                <SeekBar
+                    android:id="@+id/light_blue_seekbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignTop="@id/light_blue_label"
+                    android:layout_toEndOf="@id/light_blue_label"
+                    android:max="255"
+                    android:paddingTop="@dimen/small_padding" />
+            </RelativeLayout>
+
+
+            <RelativeLayout
+                android:id="@+id/light_color_picker_mode_box"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/light_color_choose_mode_radio_group">
+
+                <com.larswerkman.holocolorpicker.ColorPicker
+                    android:id="@+id/light_color_picker"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
+
+
+                <com.larswerkman.holocolorpicker.SVBar
+                    android:id="@+id/light_color_svbar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/light_color_picker"
+                    android:layout_centerHorizontal="true" />
+
+            </RelativeLayout>
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+</ScrollView>

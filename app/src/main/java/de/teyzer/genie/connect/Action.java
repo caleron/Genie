@@ -74,8 +74,22 @@ public class Action {
         return new Action("playPrevious", null, listener);
     }
 
-    public static Action setBrightness(ResponseListener listener) {
-        return new Action("setBrightness", null, listener);
+    public static Action setRGBColor(int red, int green, int blue, ResponseListener listener) {
+        return new Action("setRGBColor",
+                new String[]{String.valueOf(red), String.valueOf(green), String.valueOf(blue)},
+                listener);
+    }
+
+    public static Action setColor(int color, ResponseListener listener) {
+        return new Action("setColor", new String[]{String.valueOf(color)}, listener);
+    }
+
+    public static Action setColorMode(boolean musicMode, ResponseListener listener) {
+        return new Action("setColorMode", new String[]{musicMode ? "music" : "custom"}, listener);
+    }
+
+    public static Action setWhiteBrightness(int brightness, ResponseListener listener) {
+        return new Action("setWhiteBrightness", new String[]{String.valueOf(brightness)}, listener);
     }
 
     public static Action changeVisualisation(ResponseListener listener) {
@@ -85,6 +99,7 @@ public class Action {
     public static Action getStatus(ResponseListener listener) {
         return new Action("getStatus", null, listener);
     }
+
 
     public void execute(Socket socket) throws IOException {
         //Befehlsstring basteln
@@ -186,4 +201,5 @@ public class Action {
         }
         System.out.println("bytes sent: " + totalUploadedBytes);
     }
+
 }

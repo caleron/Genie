@@ -236,6 +236,12 @@ public class MainActivity extends AppCompatActivity
                 fragment = new SettingsFragment();
             }
             tag = SettingsFragment.FRAGMENT_TAG;
+        } else if (id == R.id.nav_light_remote) {
+            fragment = getFragmentManager().findFragmentByTag(LightFragment.FRAGMENT_TAG);
+            if (fragment == null) {
+                fragment = new LightFragment();
+            }
+            tag = LightFragment.FRAGMENT_TAG;
         }
 
         if (fragment != null) {
