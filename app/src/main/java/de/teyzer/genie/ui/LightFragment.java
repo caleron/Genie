@@ -58,6 +58,7 @@ public class LightFragment extends Fragment implements View.OnClickListener, Col
     RelativeLayout lightColorPickerModeBox;
     @Bind(R.id.light_color_manually_box)
     RelativeLayout lightColorManuallyBox;
+
     private DataProvider mListener;
 
     public LightFragment() {
@@ -156,11 +157,13 @@ public class LightFragment extends Fragment implements View.OnClickListener, Col
 
     @Override
     public void onColorChanged(int color) {
+        //System.out.println("changed color = [" + color + "]    " + lightColorPicker.getColor());
         mListener.getServerConnect().executeAction(Action.setColor(color, null));
     }
 
     @Override
     public void onColorSelected(int color) {
+        //System.out.println("selected color = [" + color + "]" + "    " + lightColorPicker.getColor());
         mListener.getServerConnect().executeAction(Action.setColor(color, null));
     }
 
