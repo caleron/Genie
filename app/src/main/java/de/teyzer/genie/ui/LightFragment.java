@@ -3,6 +3,7 @@ package de.teyzer.genie.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -28,7 +29,7 @@ import de.teyzer.genie.data.DataProvider;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LightFragment extends Fragment implements View.OnClickListener, ColorPicker.OnColorChangedListener, ColorPicker.OnColorSelectedListener, SeekBar.OnSeekBarChangeListener {
+public class LightFragment extends Fragment implements View.OnClickListener, ColorPicker.OnColorChangedListener, ColorPicker.OnColorSelectedListener, SeekBar.OnSeekBarChangeListener, RadioGroup.OnCheckedChangeListener {
     public static final String FRAGMENT_TAG = "light_fragment";
 
     @Bind(R.id.light_white_seekbar)
@@ -91,6 +92,8 @@ public class LightFragment extends Fragment implements View.OnClickListener, Col
         lightGreenSeekbar.setOnSeekBarChangeListener(this);
         lightBlueSeekbar.setOnSeekBarChangeListener(this);
 
+        lightColorChooseModeRadioGroup.setOnCheckedChangeListener(this);
+
         return root;
     }
 
@@ -135,30 +138,32 @@ public class LightFragment extends Fragment implements View.OnClickListener, Col
         mListener = null;
     }
 
-    @OnClick({R.id.light_color_rgb_mode_radio_btn, R.id.light_color_picker_mode_radio_button, R.id.light_rgb_manually_switch})
+    @OnClick(R.id.light_rgb_manually_switch)
     public void onClick(View view) {
-        switch (view.getId()) {
-            case R.id.light_color_rgb_mode_radio_btn:
-            case R.id.light_color_picker_mode_radio_button:
-                revalidateColorMode();
+        revalidateManuallyMode();
+        boolean musicMode = !lightRgbManuallySwitch.isChecked();
+        mListener.getServerConnect().executeAction(Action.setColorMode(musicMode, null));
 
-                break;
-            case R.id.light_rgb_manually_switch:
-                revalidateManuallyMode();
-                boolean musicMode = !lightRgbManuallySwitch.isChecked();
-                mListener.getServerConnect().executeAction(Action.setColorMode(musicMode, null));
-
-                break;
-        }
     }
 
     private void revalidateColorMode() {
         if (lightColorPickerModeRadioButton.isChecked()) {
+            //Colorpicker anzeigen
             lightRgbModeBox.setVisibility(View.GONE);
             lightColorPickerModeBox.setVisibility(View.VISIBLE);
+
+            lightColorPicker.setColor(Color.rgb(lightRedSeekbar.getProgress(),
+                    lightGreenSeekbar.getProgress(), lightBlueSeekbar.getProgress()));
+
         } else {
+            //RGB-Schieber anzeigen
             lightRgbModeBox.setVisibility(View.VISIBLE);
             lightColorPickerModeBox.setVisibility(View.GONE);
+
+            int color = lightColorPicker.getColor();
+            lightRedSeekbar.setProgress(Color.red(color));
+            lightGreenSeekbar.setProgress(Color.green(color));
+            lightBlueSeekbar.setProgress(Color.blue(color));
         }
     }
 
@@ -169,6 +174,12 @@ public class LightFragment extends Fragment implements View.OnClickListener, Col
         } else {
             lightColorManuallyBox.setVisibility(View.VISIBLE);
         }
+    }
+
+    @Override
+    public void onCheckedChanged(RadioGroup group, int checkedId) {
+        //wird ausgelöst, wenn der Farbmodus verändert wurde
+        revalidateColorMode();
     }
 
     @Override
@@ -213,4 +224,5 @@ public class LightFragment extends Fragment implements View.OnClickListener, Col
     public void onStopTrackingTouch(SeekBar seekBar) {
 
     }
+
 }

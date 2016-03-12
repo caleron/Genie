@@ -220,6 +220,7 @@ public class MainActivity extends AppCompatActivity
         showFragment(id, false);
     }
 
+    @SuppressWarnings("StatementWithEmptyBody")
     private void showFragment(int id, boolean isFirst) {
         Fragment fragment = null;
         String tag = "";
@@ -271,6 +272,7 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         } else {
             getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(R.anim.frag_enter, R.anim.frag_exit, R.anim.frag_pop_enter, R.anim.frag_pop_exit)
                     .replace(R.id.main_fragment_container, frag, fragmentTag)
                     .addToBackStack(fragmentTag)
                     .commit();
