@@ -171,7 +171,7 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     }
 
     @OnClick({R.id.music_shuffle_btn, R.id.music_previous_btn, R.id.music_play_pause_btn, R.id.music_next_btn,
-            R.id.music_repeat_btn, R.id.music_disconnect_btn})
+            R.id.music_repeat_btn})
     public void onClick(View view) {
         ServerConnect serverConnect = mListener.getServerConnect();
         switch (view.getId()) {
@@ -202,10 +202,6 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
                 refreshRepeatBtnState();
 
                 serverConnect.executeAction(Action.setRepeatMode(playerState.getRepeatMode(), this));
-                break;
-
-            case R.id.music_disconnect_btn:
-                serverConnect.disconnect();
                 break;
         }
     }
