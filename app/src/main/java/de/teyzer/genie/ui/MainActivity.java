@@ -52,6 +52,7 @@ public class MainActivity extends AppCompatActivity
         if (savedInstanceState == null) {
             showFragment(startFragmentMenuItemId);
         }
+
     }
 
     /**
