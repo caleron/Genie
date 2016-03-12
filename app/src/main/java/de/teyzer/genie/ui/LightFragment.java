@@ -94,6 +94,13 @@ public class LightFragment extends Fragment implements View.OnClickListener, Col
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        revalidateColorMode();
+        revalidateManuallyMode();
+    }
+
+    @Override
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
@@ -132,26 +139,34 @@ public class LightFragment extends Fragment implements View.OnClickListener, Col
         switch (view.getId()) {
             case R.id.light_color_rgb_mode_radio_btn:
             case R.id.light_color_picker_mode_radio_button:
-
-                if (lightColorPickerModeRadioButton.isChecked()) {
-                    lightRgbModeBox.setVisibility(View.GONE);
-                    lightColorPickerModeBox.setVisibility(View.VISIBLE);
-                } else {
-                    lightRgbModeBox.setVisibility(View.VISIBLE);
-                    lightColorPickerModeBox.setVisibility(View.GONE);
-                }
+                revalidateColorMode();
 
                 break;
             case R.id.light_rgb_manually_switch:
+                revalidateManuallyMode();
                 boolean musicMode = !lightRgbManuallySwitch.isChecked();
-                if (musicMode) {
-                    lightColorManuallyBox.setVisibility(View.GONE);
-                } else {
-                    lightColorManuallyBox.setVisibility(View.VISIBLE);
-                }
-
                 mListener.getServerConnect().executeAction(Action.setColorMode(musicMode, null));
+
                 break;
+        }
+    }
+
+    private void revalidateColorMode() {
+        if (lightColorPickerModeRadioButton.isChecked()) {
+            lightRgbModeBox.setVisibility(View.GONE);
+            lightColorPickerModeBox.setVisibility(View.VISIBLE);
+        } else {
+            lightRgbModeBox.setVisibility(View.VISIBLE);
+            lightColorPickerModeBox.setVisibility(View.GONE);
+        }
+    }
+
+    private void revalidateManuallyMode() {
+        boolean musicMode = !lightRgbManuallySwitch.isChecked();
+        if (musicMode) {
+            lightColorManuallyBox.setVisibility(View.GONE);
+        } else {
+            lightColorManuallyBox.setVisibility(View.VISIBLE);
         }
     }
 

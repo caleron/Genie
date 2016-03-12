@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity
     private static MainActivity mainActivity;
     DataManager dataManager;
     ServerConnect serverConnect;
-    int startFragmentMenuItemId = R.id.nav_food_inventory;
+    int startFragmentMenuItemId = R.id.nav_light_remote;
 
     public MainActivity() {
         mainActivity = this;
@@ -242,6 +242,7 @@ public class MainActivity extends AppCompatActivity
                 fragment = new LightFragment();
             }
             tag = LightFragment.FRAGMENT_TAG;
+
         }
 
         if (fragment != null) {
@@ -252,7 +253,7 @@ public class MainActivity extends AppCompatActivity
     private void showFragment(Fragment frag, String fragmentTag) {
         getFragmentManager().beginTransaction()
                 .replace(R.id.main_fragment_container, frag, fragmentTag)
-                .addToBackStack(null)
+                .addToBackStack(fragmentTag)
                 .commit();
     }
 

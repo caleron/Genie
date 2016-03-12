@@ -6,6 +6,7 @@ import android.preference.PreferenceManager;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.Socket;
 import java.net.SocketException;
 import java.util.LinkedList;
@@ -67,13 +68,16 @@ public class ServerConnect implements Prefs {
                 }
                 socket = new Socket(hostIp, hostPort);
                 socket.setSoTimeout(5000);
+
             } catch (IOException e) {
-                e.printStackTrace();
+                if (!(e instanceof ConnectException)) {
+                    e.printStackTrace();
+                }
 
                 activity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(activity, "Fehler: Verbindung fehlgeschlagen!", Toast.LENGTH_LONG).show();
+                        Toast.makeText(activity, "Fehler: Verbindung fehlgeschlagen", Toast.LENGTH_SHORT).show();
                     }
                 });
             }

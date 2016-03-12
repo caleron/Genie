@@ -93,17 +93,9 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-        //PlayerState wieder laden
-        //applyPlayerState();
-        System.out.println("created");
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
-        System.out.println("resume");
+        //Playerstate neu abfragen
         requestStatusRefresh();
     }
 
