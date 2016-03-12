@@ -1,11 +1,11 @@
 package de.teyzer.genie.ui;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -38,6 +38,11 @@ public class FoodListFragment extends Fragment {
     public static final int REQUEST_NEW_PRODUCT = 3;
     public static final int REQUEST_EDIT_PRODUCT = 4;
 
+    @Bind(R.id.food_list)
+    RecyclerView foodList;
+    @Bind(R.id.food_list_fab)
+    FloatingActionButton foodListFab;
+
     private DataProvider mListener;
     private FoodAdapter mAdapter;
     private FoodListFragment foodListFragment;
@@ -52,21 +57,20 @@ public class FoodListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.food_list_fragment, container, false);
-        //Liste initialisieren
-        RecyclerView mRecyclerView = (RecyclerView) root.findViewById(R.id.food_list);
 
+        ButterKnife.bind(this, root);
+
+        //Liste initialisieren
         RecyclerView.LayoutManager mListLayoutManager = new LinearLayoutManager(getActivity());
-        mRecyclerView.setLayoutManager(mListLayoutManager);
+        foodList.setLayoutManager(mListLayoutManager);
 
         mAdapter = new FoodAdapter();
-        mRecyclerView.setAdapter(mAdapter);
+        foodList.setAdapter(mAdapter);
 
         //damit der Adapter darauf zugreifen kann
         foodListFragment = this;
 
-        ButterKnife.bind(this, root);
         return root;
     }
 

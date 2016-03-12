@@ -2,9 +2,9 @@ package de.teyzer.genie.ui;
 
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +30,7 @@ import de.teyzer.genie.data.DataProvider;
  */
 public class LightFragment extends Fragment implements View.OnClickListener, ColorPicker.OnColorChangedListener, ColorPicker.OnColorSelectedListener, SeekBar.OnSeekBarChangeListener {
     public static final String FRAGMENT_TAG = "light_fragment";
+
     @Bind(R.id.light_white_seekbar)
     SeekBar lightWhiteSeekbar;
     @Bind(R.id.light_rgb_manually_switch)

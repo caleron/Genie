@@ -1,12 +1,12 @@
 package de.teyzer.genie.ui;
 
-import android.app.Fragment;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,6 +20,8 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.teyzer.genie.R;
 import de.teyzer.genie.connect.Action;
 import de.teyzer.genie.connect.ServerConnect;
@@ -36,6 +38,13 @@ public class MainActivity extends AppCompatActivity
     ServerConnect serverConnect;
     int startFragmentMenuItemId = R.id.nav_light_remote;
 
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.nav_view)
+    NavigationView navView;
+    @Bind(R.id.drawer_layout)
+    DrawerLayout drawerLayout;
+
     public MainActivity() {
         mainActivity = this;
     }
@@ -50,9 +59,8 @@ public class MainActivity extends AppCompatActivity
         checkIntent();
 
         if (savedInstanceState == null) {
-            showFragment(startFragmentMenuItemId);
+            showFragment(startFragmentMenuItemId, true);
         }
-
     }
 
     /**
@@ -62,27 +70,25 @@ public class MainActivity extends AppCompatActivity
      */
     private void initGui(Bundle savedInstanceState) {
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        final DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        navigationView.getMenu().getItem(0).setChecked(true);
+        navView.setNavigationItemSelectedListener(this);
+        navView.getMenu().getItem(0).setChecked(true);
 
-        LinearLayout navHeader = (LinearLayout) navigationView.getHeaderView(0);
+        LinearLayout navHeader = (LinearLayout) navView.getHeaderView(0);
 
         navHeader.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 showFragment(R.id.action_settings);
-                drawer.closeDrawer(GravityCompat.START);
+                drawerLayout.closeDrawer(GravityCompat.START);
             }
         });
     }
@@ -155,9 +161,8 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
         }
@@ -180,6 +185,12 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -196,23 +207,25 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
 
         showFragment(item.getItemId());
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawerLayout.closeDrawer(GravityCompat.START);
         return true;
     }
 
     private void showFragment(int id) {
+        showFragment(id, false);
+    }
+
+    private void showFragment(int id, boolean isFirst) {
         Fragment fragment = null;
         String tag = "";
+
         if (id == R.id.nav_food_inventory) {
-            fragment = getFragmentManager().findFragmentByTag(FoodListFragment.FRAGMENT_TAG);
+            fragment = getSupportFragmentManager().findFragmentByTag(FoodListFragment.FRAGMENT_TAG);
             if (fragment == null) {
                 fragment = new FoodListFragment();
             }
@@ -220,7 +233,7 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_shopping_list) {
 
         } else if (id == R.id.nav_music_remote) {
-            fragment = getFragmentManager().findFragmentByTag(MusicFragment.FRAGMENT_TAG);
+            fragment = getSupportFragmentManager().findFragmentByTag(MusicFragment.FRAGMENT_TAG);
             if (fragment == null) {
                 fragment = new MusicFragment();
             }
@@ -232,13 +245,13 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_send) {
 
         } else if (id == R.id.action_settings) {
-            fragment = getFragmentManager().findFragmentByTag(SettingsFragment.FRAGMENT_TAG);
+            fragment = getSupportFragmentManager().findFragmentByTag(SettingsFragment.FRAGMENT_TAG);
             if (fragment == null) {
                 fragment = new SettingsFragment();
             }
             tag = SettingsFragment.FRAGMENT_TAG;
         } else if (id == R.id.nav_light_remote) {
-            fragment = getFragmentManager().findFragmentByTag(LightFragment.FRAGMENT_TAG);
+            fragment = getSupportFragmentManager().findFragmentByTag(LightFragment.FRAGMENT_TAG);
             if (fragment == null) {
                 fragment = new LightFragment();
             }
@@ -247,15 +260,21 @@ public class MainActivity extends AppCompatActivity
         }
 
         if (fragment != null) {
-            showFragment(fragment, tag);
+            showFragment(fragment, tag, isFirst);
         }
     }
 
-    private void showFragment(Fragment frag, String fragmentTag) {
-        getFragmentManager().beginTransaction()
-                .replace(R.id.main_fragment_container, frag, fragmentTag)
-                .addToBackStack(fragmentTag)
-                .commit();
+    private void showFragment(Fragment frag, String fragmentTag, boolean isFirst) {
+        if (isFirst) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.main_fragment_container, frag, fragmentTag)
+                    .commit();
+        } else {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.main_fragment_container, frag, fragmentTag)
+                    .addToBackStack(fragmentTag)
+                    .commit();
+        }
     }
 
     @Override

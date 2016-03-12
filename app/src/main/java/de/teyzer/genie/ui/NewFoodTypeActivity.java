@@ -1,21 +1,21 @@
 package de.teyzer.genie.ui;
 
 import android.content.Intent;
-import android.support.v4.app.NavUtils;
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.teyzer.genie.R;
 import de.teyzer.genie.model.FoodType;
 
@@ -34,18 +34,26 @@ public class NewFoodTypeActivity extends AppCompatActivity {
     int editFoodTypeId;
     boolean editMode = false;
 
+    @Bind(R.id.name_text_box)
+    EditText nameTextBox;
+    @Bind(R.id.quantity_type_spinner)
     Spinner quantityTypeSpinner;
+    @Bind(R.id.preferred_meal_spinner)
     Spinner preferredMealSpinner;
-    TextView packSizeUnitLabel;
-    TextView currentQuantityUnitLabel;
-    EditText nameBox;
+    @Bind(R.id.pack_size_box)
     EditText packSizeBox;
+    @Bind(R.id.pack_size_unit_label)
+    TextView packSizeUnitLabel;
+    @Bind(R.id.current_quantity_box)
     EditText currentQuantityBox;
+    @Bind(R.id.current_quantity_unit_label)
+    TextView currentQuantityUnitLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_food_type);
+        ButterKnife.bind(this);
 
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
@@ -53,17 +61,8 @@ public class NewFoodTypeActivity extends AppCompatActivity {
         actionBar.setHomeAsUpIndicator(android.R.drawable.ic_menu_close_clear_cancel);
 
         //Dropdown-listen setzen
-        quantityTypeSpinner = (Spinner) findViewById(R.id.quantity_type_spinner);
-        preferredMealSpinner = (Spinner) findViewById(R.id.preferred_meal_spinner);
-        packSizeUnitLabel = (TextView) findViewById(R.id.pack_size_unit_label);
-        currentQuantityUnitLabel = (TextView) findViewById(R.id.current_quantity_unit_label);
-        nameBox = (EditText) findViewById(R.id.name_text_box);
-        packSizeBox = (EditText) findViewById(R.id.pack_size_box);
-        currentQuantityBox = (EditText) findViewById(R.id.current_quantity_box);
-
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.quantity_units, android.R.layout.simple_spinner_item);
-
 
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         quantityTypeSpinner.setAdapter(adapter);
@@ -109,7 +108,7 @@ public class NewFoodTypeActivity extends AppCompatActivity {
                 String quantityType = intent.getStringExtra(RESULT_QUANTITY_TYPE);
                 Double currentQuantity = intent.getDoubleExtra(RESULT_CURRENT_QUANTITY, 1.0);
 
-                nameBox.setText(name);
+                nameTextBox.setText(name);
                 packSizeBox.setText(FoodType.getQuantityString(commonPackSize));
                 currentQuantityBox.setText(FoodType.getQuantityString(currentQuantity));
                 quantityTypeSpinner.setSelection(FoodType.QUANTITY_TYPES.indexOf(quantityType));
@@ -151,18 +150,16 @@ public class NewFoodTypeActivity extends AppCompatActivity {
 
     public void saveAndFinish() {
         //TODO testen
-        String name = nameBox.getText().toString();
+        String name = nameTextBox.getText().toString();
         Double packSize = 1.0;
         try {
             packSize = Double.parseDouble(packSizeBox.getText().toString());
-        } catch (Exception ex) {
-
+        } catch (Exception ignored) {
         }
         Double currentQuantity = 0.0;
         try {
             currentQuantity = Double.parseDouble(currentQuantityBox.getText().toString());
-        } catch (Exception ex) {
-
+        } catch (Exception ignored) {
         }
         String quantityType = FoodType.QUANTITY_TYPES.get(quantityTypeSpinner.getSelectedItemPosition());
         String preferredMeal = FoodType.PREFERRED_MEALS.get(preferredMealSpinner.getSelectedItemPosition());
@@ -180,4 +177,5 @@ public class NewFoodTypeActivity extends AppCompatActivity {
         setResult(RESULT_OK, result);
         finish();
     }
+
 }

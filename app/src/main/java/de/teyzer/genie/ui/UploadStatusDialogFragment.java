@@ -3,21 +3,26 @@ package de.teyzer.genie.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.os.Bundle;
 import android.os.Looper;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.teyzer.genie.R;
 
 public class UploadStatusDialogFragment extends DialogFragment {
     public static final String FRAGMENT_TAG = "upload_status_dialog_fragment";
 
-    private TextView title;
-    private ProgressBar progressBar;
+    @Bind(R.id.upload_dialog_title)
+    TextView title;
+    @Bind(R.id.upload_dialog_progressbar)
+    ProgressBar progressBar;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -25,11 +30,10 @@ public class UploadStatusDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View rootView = inflater.inflate(R.layout.upload_status_dialog, null);
+        ButterKnife.bind(this, rootView);
 
         builder.setView(rootView);
 
-        title = (TextView) rootView.findViewById(R.id.upload_dialog_title);
-        progressBar = (ProgressBar) rootView.findViewById(R.id.upload_dialog_progressbar);
         builder.setCancelable(false);
         setCancelable(false);
 
@@ -56,5 +60,11 @@ public class UploadStatusDialogFragment extends DialogFragment {
             title.setText(text);
             progressBar.setProgress(progressPercent);
         }
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 }

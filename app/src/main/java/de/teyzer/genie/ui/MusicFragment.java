@@ -1,12 +1,12 @@
 package de.teyzer.genie.ui;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -50,6 +50,8 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     TextView musicCurrentArtistText;
     @Bind(R.id.music_current_progress_bar)
     SeekBar musicCurrentSeekBar;
+    @Bind(R.id.music_list)
+    RecyclerView trackListView;
 
     private MusicAdapter musicAdapter;
     private PlayerState playerState;
@@ -79,8 +81,7 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_music, container, false);
-
-        final RecyclerView trackListView = (RecyclerView) root.findViewById(R.id.music_list);
+        ButterKnife.bind(this, root);
 
         RecyclerView.LayoutManager mListLayoutManager = new LinearLayoutManager(getActivity());
         trackListView.setLayoutManager(mListLayoutManager);
@@ -88,7 +89,6 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
         musicAdapter = new MusicAdapter();
         trackListView.setAdapter(musicAdapter);
 
-        ButterKnife.bind(this, root);
         return root;
     }
 

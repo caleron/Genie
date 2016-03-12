@@ -3,10 +3,10 @@ package de.teyzer.genie.ui;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
@@ -15,6 +15,8 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import de.teyzer.genie.R;
 
 public class EditQuantityDialogFragment extends DialogFragment {
@@ -30,10 +32,6 @@ public class EditQuantityDialogFragment extends DialogFragment {
     public static final String STATE_QUANTITY_TYPE = "quantity_type";
     public static final String STATE_COMMON_PACK_SIZE = "pack_size";
 
-    TextView titleLabel;
-    NumberPicker numberPicker;
-    TextView unitLabel;
-
     ArrayList<String> numberPickerValues;
 
     int foodTypeId;
@@ -43,6 +41,13 @@ public class EditQuantityDialogFragment extends DialogFragment {
     String quantityType;
     Double commonPackSize;
 
+    @Bind(R.id.edit_quantity_dialog_title)
+    TextView titleLabel;
+    @Bind(R.id.edit_quantity_dialog_number_picker)
+    NumberPicker numberPicker;
+    @Bind(R.id.edit_quantity_dialog_unit)
+    TextView unitLabel;
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -50,6 +55,7 @@ public class EditQuantityDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
         View rootView = inflater.inflate(R.layout.edit_quantity_dialog, null);
+        ButterKnife.bind(this, rootView);
 
         builder.setView(rootView)
                 .setPositiveButton(R.string.save, new DialogInterface.OnClickListener() {
@@ -65,11 +71,6 @@ public class EditQuantityDialogFragment extends DialogFragment {
                 getTargetFragment().onActivityResult(getTargetRequestCode(), Activity.RESULT_CANCELED, null);
             }
         });
-
-        titleLabel = (TextView) rootView.findViewById(R.id.edit_quantity_dialog_title);
-        unitLabel = (TextView) rootView.findViewById(R.id.edit_quantity_dialog_unit);
-        numberPicker = (NumberPicker) rootView.findViewById(R.id.edit_quantity_dialog_number_picker);
-
 
         Bundle args = getArguments();
         if (savedInstanceState != null) {
@@ -185,5 +186,11 @@ public class EditQuantityDialogFragment extends DialogFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putDouble(STATE_QUANTITY, numberPicker.getValue());
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
     }
 }

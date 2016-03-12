@@ -1,19 +1,18 @@
 package de.teyzer.genie.ui;
 
-
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.Preference;
+import android.support.v7.preference.PreferenceFragmentCompat;
 
 import de.teyzer.genie.R;
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SettingsFragment extends PreferenceFragment {
+public class SettingsFragment extends PreferenceFragmentCompat {
     public static final String FRAGMENT_TAG = "settings";
 
     private static Preference.OnPreferenceChangeListener preferenceChangeListener = new Preference.OnPreferenceChangeListener() {
@@ -60,14 +59,12 @@ public class SettingsFragment extends PreferenceFragment {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public void onCreatePreferences(Bundle bundle, String s) {
         PreferenceManager.setDefaultValues(getActivity(), R.xml.settings, false);
 
         addPreferencesFromResource(R.xml.settings);
 
         bindPreferenceSummaryToValue(findPreference("host_adress"));
         bindPreferenceSummaryToValue(findPreference("host_port"));
-
     }
 }
