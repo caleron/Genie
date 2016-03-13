@@ -83,7 +83,7 @@ public class FoodListFragment extends Fragment {
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // Inflate the menu; this adds items to the action bar if it is present.
         //Wird einmal beim laden der Activity ausgeführt
-        inflater.inflate(R.menu.food_list, menu);
+        inflater.inflate(R.menu.fragment_food_list, menu);
     }
 
     @Override

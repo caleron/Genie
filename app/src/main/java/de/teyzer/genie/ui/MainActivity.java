@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -30,6 +29,7 @@ import de.teyzer.genie.connect.UploadStatusListener;
 import de.teyzer.genie.data.DataManager;
 import de.teyzer.genie.data.DataProvider;
 import de.teyzer.genie.data.MediaScanner;
+import de.teyzer.genie.data.Prefs;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DataProvider, UploadStatusListener, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity
 
         initDataManager();
 
-        checkIntent();
+        checkIntent(getIntent());
 
         if (savedInstanceState == null) {
             showFragment(startFragmentMenuItemId, true);
@@ -116,8 +116,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Prüft, ob die Activity mit einem Teilen-Intent gestartet wurde
      */
-    private void checkIntent() {
-        Intent intent = getIntent();
+    private void checkIntent(Intent intent) {
         String action = intent.getAction();
         //MIME-Type
         String type = intent.getType();
@@ -292,11 +291,22 @@ public class MainActivity extends AppCompatActivity
         return dataManager;
     }
 
+    /**
+     * Gibt die Serververbindung zurück
+     *
+     * @return Die Serververbindung
+     */
     @Override
     public ServerConnect getServerConnect() {
         return serverConnect;
     }
 
+    /**
+     * Wird ausgelöst, wenn der UploadStatus verändert wird
+     *
+     * @param text            Statustext
+     * @param progressPercent Prozentualer Forschritt, über 100 wenn fertiggestellt.
+     */
     @Override
     public void updateStatus(final String text, final int progressPercent) {
         runOnUiThread(new Runnable() {
@@ -310,9 +320,18 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    /**
+     * Wird ausgelöst, wenn Einstellungen verändert werden
+     *
+     * @param sharedPreferences Das Einstellungsobjekt
+     * @param key               Die veränderte Einstellungen
+     */
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        serverConnect.disconnect();
-        serverConnect.refreshPrefs();
+        if (key == Prefs.PREF_HOST_ADRESS || key == Prefs.PREF_HOST_PORT) {
+            serverConnect.disconnect();
+            serverConnect.refreshPrefs();
+        }
     }
+
 }

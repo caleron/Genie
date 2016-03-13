@@ -9,9 +9,14 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -54,6 +59,8 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     Toolbar toolbar;
     @Bind(R.id.tab_layout)
     TabLayout tabLayout;
+    @Bind(R.id.music_player_bar)
+    View playerBar;
 
     private PlayerState playerState;
 
@@ -75,6 +82,7 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        setHasOptionsMenu(true);
         // Inflate the layout for this fragment
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_music, container, false);
         ButterKnife.bind(this, root);
@@ -87,12 +95,17 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     }
 
     private void initTabs() {
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
-        tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+        tabLayout.addTab(tabLayout.newTab().setText("Titel"));
+        tabLayout.addTab(tabLayout.newTab().setText("Künstler"));
+        tabLayout.addTab(tabLayout.newTab().setText("Alben"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        MusicTabPagerAdapter mMusicTabPagerAdapter = new MusicTabPagerAdapter(mListener.getSupportFragmentManager());
+        /**
+         * WICHTIG - getChildFragmentManager verwenden, sonst funktioniert der Lebenszyklus
+         * der Fragmente nicht richtig. Sie werden dann nicht neu angezeigt, nachdem das
+         * MusicFragment im Hintergrund war.
+         */
+        MusicTabPagerAdapter mMusicTabPagerAdapter = new MusicTabPagerAdapter(getChildFragmentManager());
         musicListPager.setAdapter(mMusicTabPagerAdapter);
         musicListPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
@@ -114,6 +127,36 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
         });
     }
 
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //Wird einmal beim laden der Activity ausgeführt
+        inflater.inflate(R.menu.fragment_music_menu, menu);
+
+        //Suchfeld raussuchen
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) searchItem.getActionView();
+
+        //Listener setzen
+        SearchListener searchListener = new SearchListener();
+        MenuItemCompat.setOnActionExpandListener(searchItem, searchListener);
+        searchView.setOnQueryTextListener(searchListener);
+
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        //Wird beim Klick auf ein Button in der Actionbar ausgelöst
+        /*
+        int id = item.getItemId();
+
+        if (id == R.id.food_list_menu_add_food_type) {
+
+        }
+        */
+        return super.onOptionsItemSelected(item);
+    }
 
     @Override
     public void onResume() {
@@ -172,6 +215,7 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
 
     /**
      * Updated den Upload-Status
+     *
      * @param text            Statustext
      * @param progressPercent Prozentualer Forschritt, über 100 wenn fertiggestellt.
      */
@@ -403,26 +447,85 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
      */
     public class MusicTabPagerAdapter extends FragmentStatePagerAdapter {
 
+        MusicListFragment titleListFrag;
+        MusicListFragment artistListFrag;
+        MusicListFragment albumListFrag;
+
         public MusicTabPagerAdapter(FragmentManager fm) {
             super(fm);
+            titleListFrag = new MusicListFragment();
+            titleListFrag.setArguments(musicFragment, MusicListFragment.MODE_TITLE);
+
+            artistListFrag = new MusicListFragment();
+            artistListFrag.setArguments(musicFragment, MusicListFragment.MODE_ARTIST);
+
+            albumListFrag = new MusicListFragment();
+            albumListFrag.setArguments(musicFragment, MusicListFragment.MODE_ALBUM);
         }
 
         @Override
         public Fragment getItem(int i) {
-            MusicListFragment fragment = new MusicListFragment();
-            fragment.setParentFragment(musicFragment);
-            return fragment;
+            switch (i) {
+                case 0:
+                    return titleListFrag;
+                case 1:
+                    return artistListFrag;
+                case 2:
+                    return albumListFrag;
+            }
+            return titleListFrag;
         }
 
         @Override
         public int getCount() {
-            return 5;
+            return 3;
         }
 
         @Override
         public CharSequence getPageTitle(int position) {
-            return "OBJECT " + (position + 1);
+            switch (position) {
+                case 0:
+                    return "Titel";
+                case 1:
+                    return "Künstler";
+                case 2:
+                    return "Alben";
+            }
+            return "Errora";
+        }
+
+        public void pauseFragments() {
+            titleListFrag.onPause();
+
         }
     }
 
+    public class SearchListener implements MenuItemCompat.OnActionExpandListener, SearchView.OnQueryTextListener {
+
+        @Override
+        public boolean onMenuItemActionExpand(MenuItem item) {
+            //Tabbar und playerBar verstecken
+            playerBar.setVisibility(View.GONE);
+            tabLayout.setVisibility(View.GONE);
+            return true;
+        }
+
+        @Override
+        public boolean onMenuItemActionCollapse(MenuItem item) {
+            //Tabbar und playerBar wieder anzeigen
+            playerBar.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.VISIBLE);
+            return true;
+        }
+
+        @Override
+        public boolean onQueryTextSubmit(String query) {
+            return false;
+        }
+
+        @Override
+        public boolean onQueryTextChange(String newText) {
+            return false;
+        }
+    }
 }

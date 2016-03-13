@@ -10,8 +10,12 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Objects;
 
+import de.teyzer.genie.model.Album;
+import de.teyzer.genie.model.Artist;
 import de.teyzer.genie.model.FoodType;
 import de.teyzer.genie.model.Product;
 import de.teyzer.genie.model.Track;
@@ -21,6 +25,8 @@ public class DataManager {
     private SparseArray<Product> products;
 
     private SparseArray<Track> tracks;
+    private ArrayList<Artist> artists;
+    private ArrayList<Album> albums;
 
     private DbHelper dbHelper;
 
@@ -106,6 +112,67 @@ public class DataManager {
             db.execSQL(DbContract.TrackEntry.SQL_CREATE);
         }
 
+        loadAlbumAndArtists();
+    }
+
+    private void loadAlbumAndArtists() {
+        albums = new ArrayList<>();
+        artists = new ArrayList<>();
+
+        for (int i = 0, size = tracks.size(); i < size; i++) {
+            Track track = tracks.valueAt(i);
+
+            //Künstler raussuchen
+            Artist artist = null;
+            for (Artist listArtist : artists) {
+                if (track.getArtist().equals(listArtist.getName())) {
+                    artist = listArtist;
+                    break;
+                }
+            }
+
+            //Wenn nicht gefunden, neu erstellen und hinzufügen
+            if (artist == null) {
+                artist = new Artist(track.getArtist());
+                artists.add(artist);
+            }
+
+            //Album suchen
+            Album album = null;
+            for (Album listAlbum : albums) {
+                if (track.getAlbum().equals(listAlbum.getAlbumName())) {
+                    album = listAlbum;
+                    break;
+                }
+            }
+            //Wenn nicht gefunden, neu erstellen, in Liste einfügen und zum Künstler hinzufügen
+            if (album == null) {
+                //Neues Album hinzufügen
+                album = new Album(track.getAlbum(), track.getArtist());
+                albums.add(album);
+                artist.addAlbum(track.getAlbum(), album);
+            }
+            //Track zum Album hinzufügen
+            album.addTrack(tracks.keyAt(0), track);
+        }
+
+        //Alben sortieren
+        Collections.sort(albums, new Comparator<Album>() {
+            @Override
+            public int compare(Album lhs, Album rhs) {
+                return lhs.getAlbumName().compareTo(rhs.getAlbumName());
+            }
+        });
+
+        //Künstler sortieren
+        Collections.sort(artists, new Comparator<Artist>() {
+            @Override
+            public int compare(Artist lhs, Artist rhs) {
+                return lhs.getName().compareTo(rhs.getName());
+            }
+        });
+
+        System.out.println(albums.size() + " --- " + artists.size());
     }
 
     /**
@@ -419,5 +486,13 @@ public class DataManager {
      */
     public Track getTrackAt(int index) {
         return tracks.valueAt(index);
+    }
+
+    public Album getAlbumAt(int position) {
+        return albums.get(position);
+    }
+
+    public Artist getArtistAt(int position) {
+        return artists.get(position);
     }
 }

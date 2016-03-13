@@ -20,9 +20,14 @@ import de.teyzer.genie.R;
 import de.teyzer.genie.connect.Action;
 import de.teyzer.genie.data.DataManager;
 import de.teyzer.genie.data.DataProvider;
+import de.teyzer.genie.model.Album;
+import de.teyzer.genie.model.Artist;
 import de.teyzer.genie.model.Track;
 
 public class MusicListFragment extends Fragment {
+    public static final int MODE_TITLE = 0;
+    public static final int MODE_ARTIST = 1;
+    public static final int MODE_ALBUM = 2;
 
     @Bind(R.id.music_list)
     RecyclerView trackListView;
@@ -30,11 +35,14 @@ public class MusicListFragment extends Fragment {
     private MusicAdapter musicAdapter;
 
     private DataProvider mListener;
-
     private MusicFragment parentFragment;
 
-    public void setParentFragment(MusicFragment parentFragment) {
+    private int displayMode;
+
+    public void setArguments(MusicFragment parentFragment, int mode) {
         this.parentFragment = parentFragment;
+
+        this.displayMode = mode;
     }
 
     @Override
@@ -49,6 +57,18 @@ public class MusicListFragment extends Fragment {
         trackListView.setAdapter(musicAdapter);
 
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("MusicListFragment.onResume" + displayMode);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        System.out.println("MusicListFragment.onPause" + displayMode);
     }
 
     @Override
@@ -102,8 +122,20 @@ public class MusicListFragment extends Fragment {
         @Override
         public void onBindViewHolder(ViewHolder holder, int position) {
             //Bindet einen neuen Track an einen bestehenden ViewHolder
-            Track track = dataManager.getTrackAt(position);
-            holder.bindTrack(track);
+            switch (displayMode) {
+                case MODE_TITLE:
+                    Track track = dataManager.getTrackAt(position);
+                    holder.bindTrack(track);
+                    break;
+                case MODE_ALBUM:
+                    Album album = dataManager.getAlbumAt(position);
+                    holder.bindAlbum(album);
+                    break;
+                case MODE_ARTIST:
+                    Artist artist = dataManager.getArtistAt(position);
+                    holder.bindArtist(artist);
+                    break;
+            }
         }
 
         @Override
@@ -119,8 +151,11 @@ public class MusicListFragment extends Fragment {
     private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         View itemView;
         TextView titleView;
-        TextView artistView;
+        TextView subTitleView;
+
         Track track;
+        Album album;
+        Artist artist;
 
         DataManager dataManager;
 
@@ -129,7 +164,7 @@ public class MusicListFragment extends Fragment {
             this.itemView = itemView;
 
             titleView = (TextView) itemView.findViewById(R.id.titleText);
-            artistView = (TextView) itemView.findViewById(R.id.artistText);
+            subTitleView = (TextView) itemView.findViewById(R.id.subTitleText);
 
             this.itemView = itemView;
             this.dataManager = dataManager;
@@ -141,15 +176,39 @@ public class MusicListFragment extends Fragment {
             this.track = track;
 
             titleView.setText(track.getTitle());
-            artistView.setText(track.getArtist());
+            subTitleView.setText(track.getArtist());
+        }
+
+        public void bindAlbum(Album album) {
+            this.album = album;
+
+            titleView.setText(album.getAlbumName());
+            subTitleView.setText(album.getArtistName());
+        }
+
+        public void bindArtist(Artist artist) {
+            this.artist = artist;
+
+            titleView.setText(artist.getName());
+            subTitleView.setText(artist.albums.size() + " Alben");
         }
 
         @Override
         public void onClick(View v) {
-            File f = new File(track.getPath());
-            Uri uri = Uri.fromFile(f);
-            System.out.println(uri);
-            mListener.getServerConnect().executeAction(Action.playFile(uri, parentFragment, parentFragment));
+            switch (displayMode) {
+                case MODE_TITLE:
+                    File f = new File(track.getPath());
+                    Uri uri = Uri.fromFile(f);
+                    System.out.println(uri);
+                    mListener.getServerConnect().executeAction(Action.playFile(uri, parentFragment, parentFragment));
+                    break;
+                case MODE_ALBUM:
+
+                    break;
+                case MODE_ARTIST:
+
+                    break;
+            }
         }
     }
 }
