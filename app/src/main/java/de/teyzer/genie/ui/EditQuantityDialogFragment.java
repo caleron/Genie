@@ -54,7 +54,7 @@ public class EditQuantityDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View rootView = inflater.inflate(R.layout.edit_quantity_dialog, null);
+        View rootView = inflater.inflate(R.layout.dialog_edit_quantity, null);
         ButterKnife.bind(this, rootView);
 
         builder.setView(rootView)

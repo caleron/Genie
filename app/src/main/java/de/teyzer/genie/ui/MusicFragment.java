@@ -3,20 +3,20 @@ package de.teyzer.genie.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.SeekBar;
 import android.widget.TextView;
-
-import java.io.File;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -26,10 +26,8 @@ import de.teyzer.genie.connect.Action;
 import de.teyzer.genie.connect.ResponseListener;
 import de.teyzer.genie.connect.ServerConnect;
 import de.teyzer.genie.connect.UploadStatusListener;
-import de.teyzer.genie.data.DataManager;
 import de.teyzer.genie.data.DataProvider;
 import de.teyzer.genie.model.PlayerState;
-import de.teyzer.genie.model.Track;
 
 
 public class MusicFragment extends Fragment implements UploadStatusListener, ResponseListener {
@@ -50,10 +48,13 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     TextView musicCurrentArtistText;
     @Bind(R.id.music_current_progress_bar)
     SeekBar musicCurrentSeekBar;
-    @Bind(R.id.music_list)
-    RecyclerView trackListView;
+    @Bind(R.id.music_list_pager)
+    ViewPager musicListPager;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
+    @Bind(R.id.tab_layout)
+    TabLayout tabLayout;
 
-    private MusicAdapter musicAdapter;
     private PlayerState playerState;
 
     //null, falls nicht mehr aktiv
@@ -73,24 +74,46 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_music, container, false);
         ButterKnife.bind(this, root);
 
-        RecyclerView.LayoutManager mListLayoutManager = new LinearLayoutManager(getActivity());
-        trackListView.setLayoutManager(mListLayoutManager);
+        mListener.setSupportActionBar(toolbar);
 
-        musicAdapter = new MusicAdapter();
-        trackListView.setAdapter(musicAdapter);
+        initTabs();
 
         return root;
     }
+
+    private void initTabs() {
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 1"));
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 2"));
+        tabLayout.addTab(tabLayout.newTab().setText("Tab 3"));
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        MusicTabPagerAdapter mMusicTabPagerAdapter = new MusicTabPagerAdapter(mListener.getSupportFragmentManager());
+        musicListPager.setAdapter(mMusicTabPagerAdapter);
+        musicListPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                musicListPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
+    }
+
 
     @Override
     public void onResume() {
@@ -113,6 +136,7 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+        //Zum upload abbrechen, noch nicht implementiert
         if (requestCode == REQUEST_SHOW_PROGRESS && resultCode == Activity.RESULT_CANCELED) {
             uploadStatusDialogFragment = null;
         }
@@ -146,6 +170,11 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
         mListener = null;
     }
 
+    /**
+     * Updated den Upload-Status
+     * @param text            Statustext
+     * @param progressPercent Prozentualer Forschritt, über 100 wenn fertiggestellt.
+     */
     @Override
     public void updateStatus(String text, int progressPercent) {
         if (uploadStatusDialogFragment == null) {
@@ -170,6 +199,11 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
         ButterKnife.unbind(this);
     }
 
+    /**
+     * Wird beim Klick auf einen der Wiedergabesteuerungs-Buttons ausgelöst
+     *
+     * @param view Der Button
+     */
     @OnClick({R.id.music_shuffle_btn, R.id.music_previous_btn, R.id.music_play_pause_btn, R.id.music_next_btn,
             R.id.music_repeat_btn})
     public void onClick(View view) {
@@ -206,11 +240,20 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
         }
     }
 
+    /**
+     * Fordert einen neuen Serverstatus an
+     */
     private void requestStatusRefresh() {
         ServerConnect serverConnect = mListener.getServerConnect();
         serverConnect.executeAction(Action.getStatus(this));
     }
 
+    /**
+     * Wird ausgelöst, wenn eine Status-Antwort vom Server gekommen ist
+     *
+     * @param sourceAction Die Ursprungsaktion
+     * @param response     Die Antwort
+     */
     @Override
     public void responseReceived(Action sourceAction, final String response) {
         musicShuffleBtn.post(new Runnable() {
@@ -228,6 +271,9 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
         });
     }
 
+    /**
+     * Wendet den Playerstatus des Servers an
+     */
     private void applyPlayerState() {
         refreshCurrentPlayingTexts();
         refreshProgressBar();
@@ -252,11 +298,17 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
         }
     }
 
+    /**
+     * Setzt Titel und Interpret
+     */
     private void refreshCurrentPlayingTexts() {
         musicCurrentArtistText.setText(playerState.getCurrentArtist());
         musicCurrentTitleText.setText(playerState.getCurrentTitle());
     }
 
+    /**
+     * Setzt aktuellen und maximalen Wert der musicCurrentSeekBar
+     */
     private void refreshProgressBar() {
         if (musicCurrentSeekBar.getMax() != playerState.getTrackLength()) {
             musicCurrentSeekBar.setProgress(0);
@@ -265,6 +317,9 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
         musicCurrentSeekBar.setProgress(playerState.getPlayPosition());
     }
 
+    /**
+     * Passt das Icon des Play/Pause-Buttons an
+     */
     private void refreshPlayPauseBtnState() {
         int imageResource;
         if (playerState.isPlaying()) {
@@ -275,6 +330,9 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
         musicPlayPauseBtn.setImageResource(imageResource);
     }
 
+    /**
+     * Passt das Icon des Shuffle-Buttons an
+     */
     private void refreshShuffleBtnState() {
         int imageResource;
 
@@ -287,6 +345,9 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
         musicShuffleBtn.setImageResource(imageResource);
     }
 
+    /**
+     * Passt das Icon des Wiederholungsmodus-Buttons an
+     */
     private void refreshRepeatBtnState() {
         int imageResource;
         if (playerState.getRepeatMode() == PlayerState.REPEAT_MODE_NONE) {
@@ -338,76 +399,30 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     }
 
     /**
-     * Adapter zum Darstellen der Nahrungsmitteltypen in der Liste
+     * Wählt Passend zum Tabindex das richtige Tabfragment aus
      */
-    private class MusicAdapter extends RecyclerView.Adapter<ViewHolder> {
-        DataManager dataManager;
+    public class MusicTabPagerAdapter extends FragmentStatePagerAdapter {
 
-        /**
-         * Erstellt einen neuen MusicAdapter und holt den Datenmanager von der Activity
-         */
-        public MusicAdapter() {
-            dataManager = mListener.getDataManager();
+        public MusicTabPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
 
         @Override
-        public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            //Wird so oft ausgeführt, wie ViewHolder auf den Bildschirm passen
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.music_list_item, parent, false);
-            return new ViewHolder(v, dataManager);
+        public Fragment getItem(int i) {
+            MusicListFragment fragment = new MusicListFragment();
+            fragment.setParentFragment(musicFragment);
+            return fragment;
         }
 
         @Override
-        public void onBindViewHolder(ViewHolder holder, int position) {
-            //Bindet einen neuen Track an einen bestehenden ViewHolder
-            Track track = dataManager.getTrackAt(position);
-            holder.bindTrack(track);
+        public int getCount() {
+            return 5;
         }
 
         @Override
-        public int getItemCount() {
-            return dataManager.getTracks().size();
+        public CharSequence getPageTitle(int position) {
+            return "OBJECT " + (position + 1);
         }
     }
 
-
-    /**
-     * Verwaltet einen Eintrag in der RecyclerView
-     */
-    private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        View itemView;
-        TextView titleView;
-        TextView artistView;
-        Track track;
-
-        DataManager dataManager;
-
-        public ViewHolder(View itemView, DataManager dataManager) {
-            super(itemView);
-            this.itemView = itemView;
-
-            titleView = (TextView) itemView.findViewById(R.id.titleText);
-            artistView = (TextView) itemView.findViewById(R.id.artistText);
-
-            this.itemView = itemView;
-            this.dataManager = dataManager;
-
-            itemView.setOnClickListener(this);
-        }
-
-        public void bindTrack(Track track) {
-            this.track = track;
-
-            titleView.setText(track.getTitle());
-            artistView.setText(track.getArtist());
-        }
-
-        @Override
-        public void onClick(View v) {
-            File f = new File(track.getPath());
-            Uri uri = Uri.fromFile(f);
-            System.out.println(uri);
-            mListener.getServerConnect().executeAction(Action.playFile(uri, musicFragment, musicFragment));
-        }
-    }
 }

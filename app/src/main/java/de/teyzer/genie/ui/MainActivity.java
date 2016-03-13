@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -33,17 +34,17 @@ import de.teyzer.genie.data.MediaScanner;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DataProvider, UploadStatusListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static MainActivity mainActivity;
+    public static MainActivity mainActivity;
     DataManager dataManager;
     ServerConnect serverConnect;
     int startFragmentMenuItemId = R.id.nav_light_remote;
 
-    @Bind(R.id.toolbar)
-    Toolbar toolbar;
     @Bind(R.id.nav_view)
     NavigationView navView;
     @Bind(R.id.drawer_layout)
     DrawerLayout drawerLayout;
+
+    ActionBarDrawerToggle lastActionBarDrawerToggle = null;
 
     public MainActivity() {
         mainActivity = this;
@@ -72,13 +73,6 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(toggle);
-        toggle.syncState();
-
         navView.setNavigationItemSelectedListener(this);
         navView.getMenu().getItem(0).setChecked(true);
 
@@ -91,6 +85,20 @@ public class MainActivity extends AppCompatActivity
                 drawerLayout.closeDrawer(GravityCompat.START);
             }
         });
+    }
+
+    @Override
+    public void setSupportActionBar(Toolbar toolbar) {
+        super.setSupportActionBar(toolbar);
+
+        //Alten listener entfernen
+        drawerLayout.removeDrawerListener(lastActionBarDrawerToggle);
+
+        //neuen hinzufügen
+        lastActionBarDrawerToggle = new ActionBarDrawerToggle(
+                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerLayout.addDrawerListener(lastActionBarDrawerToggle);
+        lastActionBarDrawerToggle.syncState();
     }
 
     /**
@@ -272,7 +280,7 @@ public class MainActivity extends AppCompatActivity
                     .commit();
         } else {
             getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(R.anim.frag_enter, R.anim.frag_exit, R.anim.frag_pop_enter, R.anim.frag_pop_exit)
+                    //.setCustomAnimations(R.anim.frag_enter, R.anim.frag_exit, R.anim.frag_pop_enter, R.anim.frag_pop_exit)
                     .replace(R.id.main_fragment_container, frag, fragmentTag)
                     .addToBackStack(fragmentTag)
                     .commit();

@@ -8,6 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -42,6 +43,8 @@ public class FoodListFragment extends Fragment {
     RecyclerView foodList;
     @Bind(R.id.food_list_fab)
     FloatingActionButton foodListFab;
+    @Bind(R.id.toolbar)
+    Toolbar toolbar;
 
     private DataProvider mListener;
     private FoodAdapter mAdapter;
@@ -57,9 +60,11 @@ public class FoodListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
-        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.food_list_fragment, container, false);
+        ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_food_list, container, false);
 
         ButterKnife.bind(this, root);
+
+        mListener.setSupportActionBar(toolbar);
 
         //Liste initialisieren
         RecyclerView.LayoutManager mListLayoutManager = new LinearLayoutManager(getActivity());
@@ -295,7 +300,7 @@ public class FoodListFragment extends Fragment {
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             //Wird so oft ausgeführt, wie ViewHolder auf den Bildschirm passen
-            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.food_list_item, parent, false);
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_food, parent, false);
             return new ViewHolder(v, dataManager);
         }
 

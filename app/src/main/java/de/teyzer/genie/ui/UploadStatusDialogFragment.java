@@ -8,7 +8,6 @@ import android.os.Looper;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -29,7 +28,7 @@ public class UploadStatusDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
 
-        View rootView = inflater.inflate(R.layout.upload_status_dialog, null);
+        View rootView = inflater.inflate(R.layout.dialog_upload_status, null);
         ButterKnife.bind(this, rootView);
 
         builder.setView(rootView);
