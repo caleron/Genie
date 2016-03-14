@@ -89,16 +89,31 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void setSupportActionBar(Toolbar toolbar) {
+        setSupportActionBar(toolbar, false);
+    }
+
+    @Override
+    public void setSupportActionBar(Toolbar toolbar, boolean useBackButton) {
         super.setSupportActionBar(toolbar);
 
         //Alten listener entfernen
         drawerLayout.removeDrawerListener(lastActionBarDrawerToggle);
 
-        //neuen hinzufügen
-        lastActionBarDrawerToggle = new ActionBarDrawerToggle(
-                this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawerLayout.addDrawerListener(lastActionBarDrawerToggle);
-        lastActionBarDrawerToggle.syncState();
+        if (useBackButton) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onBackPressed();
+                }
+            });
+        } else {
+            //neuen hinzufügen
+            lastActionBarDrawerToggle = new ActionBarDrawerToggle(
+                    this, drawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawerLayout.addDrawerListener(lastActionBarDrawerToggle);
+            lastActionBarDrawerToggle.syncState();
+        }
     }
 
     /**

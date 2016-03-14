@@ -22,6 +22,7 @@ import de.teyzer.genie.model.Track;
 import de.teyzer.genie.ui.custom.PlayerBar;
 
 public class AlbumFragment extends AbstractFragment {
+    public static final String FRAGMENT_TAG = "album_fragment";
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
@@ -48,11 +49,12 @@ public class AlbumFragment extends AbstractFragment {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_album, container, false);
         ButterKnife.bind(this, root);
 
-        mListener.setSupportActionBar(toolbar);
-        mListener.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mListener.setSupportActionBar(toolbar, true);
 
         //Titel setzen
         toolbar.setTitle(displayAlbum.getAlbumName());
+
+        playerBar.setDataProvider(mListener);
 
         RecyclerView.LayoutManager mListLayoutManager = new LinearLayoutManager(getActivity());
         trackListView.setLayoutManager(mListLayoutManager);
@@ -68,7 +70,6 @@ public class AlbumFragment extends AbstractFragment {
         displayAlbum = album;
         displayTracks = album.getTracks();
     }
-
 
     @Override
     public void onResume() {

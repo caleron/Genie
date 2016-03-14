@@ -1,6 +1,5 @@
 package de.teyzer.genie.data;
 
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
@@ -17,4 +16,6 @@ public interface DataProvider {
     ActionBar getSupportActionBar();
 
     void setSupportActionBar(Toolbar actionBar);
+
+    void setSupportActionBar(Toolbar actionBar, boolean useBackButton);
 }

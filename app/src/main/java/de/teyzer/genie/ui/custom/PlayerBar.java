@@ -72,8 +72,10 @@ public class PlayerBar extends RelativeLayout implements ResponseListener {
      * Fordert einen neuen Serverstatus an
      */
     public void requestStatusRefresh() {
-        ServerConnect serverConnect = dataProvider.getServerConnect();
-        serverConnect.executeAction(Action.getStatus(this));
+        if (dataProvider != null) {
+            ServerConnect serverConnect = dataProvider.getServerConnect();
+            serverConnect.executeAction(Action.getStatus(this));
+        }
     }
 
     /**

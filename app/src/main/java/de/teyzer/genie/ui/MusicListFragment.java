@@ -2,6 +2,7 @@ package de.teyzer.genie.ui;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -236,7 +237,18 @@ public class MusicListFragment extends AbstractFragment {
                     mListener.getServerConnect().executeAction(Action.playFile(uri, parentFragment, parentFragment));
                     break;
                 case MODE_ALBUM:
+                    FragmentManager fragmentManager = mListener.getSupportFragmentManager();
+                    AlbumFragment fragment = (AlbumFragment) fragmentManager.findFragmentByTag(AlbumFragment.FRAGMENT_TAG);
+                    if (fragment == null) {
+                        fragment = new AlbumFragment();
+                    }
+                    fragment.setArguments(parentFragment, album);
 
+                    fragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.frag_enter, R.anim.frag_exit, R.anim.frag_pop_enter, R.anim.frag_pop_exit)
+                            .replace(R.id.main_fragment_container, fragment, AlbumFragment.FRAGMENT_TAG)
+                            .addToBackStack(AlbumFragment.FRAGMENT_TAG)
+                            .commit();
                     break;
                 case MODE_ARTIST:
 
