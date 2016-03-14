@@ -32,6 +32,10 @@ public class DataManager {
 
     public DataManager(Context context) {
         dbHelper = new DbHelper(context);
+
+        tracks = new ArrayList<>();
+        artists = new ArrayList<>();
+        albums = new ArrayList<>();
     }
 
     /**
@@ -89,7 +93,7 @@ public class DataManager {
     }
 
     private void loadTracks() {
-        tracks = new ArrayList<>();
+        tracks.clear();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
@@ -116,8 +120,8 @@ public class DataManager {
     }
 
     private void loadAlbumAndArtists() {
-        albums = new ArrayList<>();
-        artists = new ArrayList<>();
+        albums.clear();
+        artists.clear();
 
         for (int i = 0, size = tracks.size(); i < size; i++) {
             Track track = tracks.get(i);
@@ -150,7 +154,7 @@ public class DataManager {
                 //Neues Album hinzufügen
                 album = new Album(track.getAlbum(), track.getArtist());
                 albums.add(album);
-                artist.addAlbum(track.getAlbum(), album);
+                artist.addAlbum(album);
             }
             //Track zum Album hinzufügen
             album.addTrack(track);
@@ -470,98 +474,12 @@ public class DataManager {
     }
 
     /**
-     * Sucht Tracks zu einem Titel heraus. Falls der Suchbegriff ein leerer String ist, werden
-     * alle Tracks zurückgegeben.
-     *
-     * @param title Der Suchtitel
-     * @return Liste passender Tracks
-     */
-    public ArrayList<Track> findTracks(String title) {
-        if (title.length() == 0) {
-            return tracks;
-        }
-
-        title = title.toLowerCase();
-        ArrayList<Track> result = new ArrayList<>();
-
-        for (Track track : tracks) {
-            if (track.getTitle().toLowerCase().contains(title)) {
-                result.add(track);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Sucht Künstler nach einem Suchbegriff heraus. Falls der Suchbegriff ein leerer String ist,
-     * werden alle Künstler zurückgegeben.
-     *
-     * @param title Der Suchbegriff
-     * @return Liste passender Interpreten
-     */
-    public ArrayList<Artist> findArtists(String title) {
-        if (title.length() == 0) {
-            return artists;
-        }
-
-        title = title.toLowerCase();
-        ArrayList<Artist> result = new ArrayList<>();
-
-        for (Artist artist : artists) {
-            if (artist.getName().toLowerCase().contains(title)) {
-                result.add(artist);
-            }
-        }
-        return result;
-    }
-
-    /**
-     * Sucht Alben nach einem Suchbegriff heraus. Falls der Suchbegriff ein leerer String ist, werden
-     * alle Alben zurückgegeben.
-     *
-     * @param title Der Suchbegriff
-     * @return Liste passender Alben
-     */
-    public ArrayList<Album> findAlbums(String title) {
-        if (title.length() == 0) {
-            return albums;
-        }
-        title = title.toLowerCase();
-        ArrayList<Album> result = new ArrayList<>();
-
-        for (Album album : albums) {
-            if (album.getAlbumName().toLowerCase().contains(title)) {
-                result.add(album);
-            }
-        }
-        return result;
-    }
-
-    /**
      * Gibt die Liste aller Tracks zurück
      *
      * @return SparseArray aus Tracks
      */
     public ArrayList<Track> getTracks() {
         return tracks;
-    }
-
-    /**
-     * Gibt den Track an einem Index zurück
-     *
-     * @param index Der Index
-     * @return Track
-     */
-    public Track getTrackAt(int index) {
-        return tracks.get(index);
-    }
-
-    public Album getAlbumAt(int position) {
-        return albums.get(position);
-    }
-
-    public Artist getArtistAt(int position) {
-        return artists.get(position);
     }
 
     public ArrayList<Album> getAlbums() {

@@ -18,10 +18,10 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.teyzer.genie.R;
 import de.teyzer.genie.connect.Action;
-import de.teyzer.genie.data.DataManager;
 import de.teyzer.genie.model.Album;
 import de.teyzer.genie.model.Artist;
 import de.teyzer.genie.model.Track;
+import de.teyzer.genie.ui.custom.ArtistFragment;
 
 public class MusicListFragment extends AbstractFragment {
     public static final int MODE_TITLE = 0;
@@ -38,14 +38,30 @@ public class MusicListFragment extends AbstractFragment {
     private boolean searchMode = false;
     private boolean isEmptySearchString = true;
 
-    ArrayList<Track> searchTracks = new ArrayList<>();
-    ArrayList<Artist> searchArtists = new ArrayList<>();
-    ArrayList<Album> searchAlbums = new ArrayList<>();
+    ArrayList<Track> searchTracks;
+    ArrayList<Artist> searchArtists;
+    ArrayList<Album> searchAlbums;
 
-    public void setArguments(MusicFragment parentFragment, int mode) {
+    ArrayList<Track> displayTracks;
+    ArrayList<Artist> displayArtists;
+    ArrayList<Album> displayAlbums;
+
+    public void setTrackMode(MusicFragment parentFragment, ArrayList<Track> tracks) {
         this.parentFragment = parentFragment;
+        this.displayMode = MODE_TITLE;
+        displayTracks = tracks;
+    }
 
-        this.displayMode = mode;
+    public void setAlbumMode(MusicFragment parentFragment, ArrayList<Album> albums) {
+        this.parentFragment = parentFragment;
+        this.displayMode = MODE_ALBUM;
+        displayAlbums = albums;
+    }
+
+    public void setArtistMode(MusicFragment parentFragment, ArrayList<Artist> artists) {
+        this.parentFragment = parentFragment;
+        this.displayMode = MODE_ARTIST;
+        displayArtists = artists;
     }
 
     @Override
@@ -62,6 +78,75 @@ public class MusicListFragment extends AbstractFragment {
         return root;
     }
 
+
+    /**
+     * Sucht Tracks zu einem Titel heraus. Falls der Suchbegriff ein leerer String ist, werden
+     * alle Tracks zurückgegeben.
+     *
+     * @param title Der Suchtitel
+     * @return Liste passender Tracks
+     */
+    public ArrayList<Track> findTracks(String title) {
+        if (title.length() == 0) {
+            return displayTracks;
+        }
+
+        title = title.toLowerCase();
+        ArrayList<Track> result = new ArrayList<>();
+
+        for (Track track : displayTracks) {
+            if (track.getTitle().toLowerCase().contains(title)) {
+                result.add(track);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Sucht Künstler nach einem Suchbegriff heraus. Falls der Suchbegriff ein leerer String ist,
+     * werden alle Künstler zurückgegeben.
+     *
+     * @param title Der Suchbegriff
+     * @return Liste passender Interpreten
+     */
+    public ArrayList<Artist> findArtists(String title) {
+        if (title.length() == 0) {
+            return displayArtists;
+        }
+
+        title = title.toLowerCase();
+        ArrayList<Artist> result = new ArrayList<>();
+
+        for (Artist artist : displayArtists) {
+            if (artist.getName().toLowerCase().contains(title)) {
+                result.add(artist);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Sucht Alben nach einem Suchbegriff heraus. Falls der Suchbegriff ein leerer String ist, werden
+     * alle Alben zurückgegeben.
+     *
+     * @param title Der Suchbegriff
+     * @return Liste passender Alben
+     */
+    public ArrayList<Album> findAlbums(String title) {
+        if (title.length() == 0) {
+            return displayAlbums;
+        }
+        title = title.toLowerCase();
+        ArrayList<Album> result = new ArrayList<>();
+
+        for (Album album : displayAlbums) {
+            if (album.getAlbumName().toLowerCase().contains(title)) {
+                result.add(album);
+            }
+        }
+        return result;
+    }
+
     /**
      * Setzt den Suchmodus.
      *
@@ -76,20 +161,19 @@ public class MusicListFragment extends AbstractFragment {
     }
 
     public void updateSearchString(String text) {
-        DataManager dataManager = mListener.getDataManager();
         if (text.length() == 0) {
             isEmptySearchString = true;
         } else {
             isEmptySearchString = false;
             switch (displayMode) {
                 case MODE_TITLE:
-                    searchTracks = dataManager.findTracks(text);
+                    searchTracks = findTracks(text);
                     break;
                 case MODE_ALBUM:
-                    searchAlbums = dataManager.findAlbums(text);
+                    searchAlbums = findAlbums(text);
                     break;
                 case MODE_ARTIST:
-                    searchArtists = dataManager.findArtists(text);
+                    searchArtists = findArtists(text);
                     break;
             }
         }
@@ -100,20 +184,17 @@ public class MusicListFragment extends AbstractFragment {
      * Adapter zum Darstellen der Musiktitel in der Liste
      */
     private class MusicAdapter extends RecyclerView.Adapter<ViewHolder> {
-        DataManager dataManager;
-
         /**
-         * Erstellt einen neuen MusicAdapter und holt den Datenmanager von der Activity
+         * Erstellt einen neuen MusicAdapter
          */
         public MusicAdapter() {
-            dataManager = mListener.getDataManager();
         }
 
         @Override
         public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             //Wird so oft ausgeführt, wie ViewHolder auf den Bildschirm passen
             View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_music, parent, false);
-            return new ViewHolder(v, dataManager);
+            return new ViewHolder(v);
         }
 
         @Override
@@ -125,7 +206,7 @@ public class MusicListFragment extends AbstractFragment {
                     if (searchMode && !isEmptySearchString) {
                         track = searchTracks.get(position);
                     } else {
-                        track = dataManager.getTrackAt(position);
+                        track = displayTracks.get(position);
                     }
                     holder.bindTrack(track);
                     break;
@@ -134,7 +215,7 @@ public class MusicListFragment extends AbstractFragment {
                     if (searchMode && !isEmptySearchString) {
                         album = searchAlbums.get(position);
                     } else {
-                        album = dataManager.getAlbumAt(position);
+                        album = displayAlbums.get(position);
                     }
                     holder.bindAlbum(album);
                     break;
@@ -143,7 +224,7 @@ public class MusicListFragment extends AbstractFragment {
                     if (searchMode && !isEmptySearchString) {
                         artist = searchArtists.get(position);
                     } else {
-                        artist = dataManager.getArtistAt(position);
+                        artist = displayArtists.get(position);
                     }
                     holder.bindArtist(artist);
                     break;
@@ -157,19 +238,19 @@ public class MusicListFragment extends AbstractFragment {
                     if (searchMode && !isEmptySearchString) {
                         return searchTracks.size();
                     } else {
-                        return dataManager.getTracks().size();
+                        return displayTracks.size();
                     }
                 case MODE_ALBUM:
                     if (searchMode && !isEmptySearchString) {
                         return searchAlbums.size();
                     } else {
-                        return dataManager.getAlbums().size();
+                        return displayAlbums.size();
                     }
                 case MODE_ARTIST:
                     if (searchMode && !isEmptySearchString) {
                         return searchArtists.size();
                     } else {
-                        return dataManager.getArtists().size();
+                        return displayArtists.size();
                     }
                 default:
                     Log.e(this.toString(), "Incorrect display mode = " + displayMode);
@@ -191,9 +272,7 @@ public class MusicListFragment extends AbstractFragment {
         Album album;
         Artist artist;
 
-        DataManager dataManager;
-
-        public ViewHolder(View itemView, DataManager dataManager) {
+        public ViewHolder(View itemView) {
             super(itemView);
             this.itemView = itemView;
 
@@ -201,7 +280,6 @@ public class MusicListFragment extends AbstractFragment {
             subTitleView = (TextView) itemView.findViewById(R.id.subTitleText);
 
             this.itemView = itemView;
-            this.dataManager = dataManager;
 
             itemView.setOnClickListener(this);
         }
@@ -251,7 +329,18 @@ public class MusicListFragment extends AbstractFragment {
                             .commit();
                     break;
                 case MODE_ARTIST:
+                    fragmentManager = mListener.getSupportFragmentManager();
+                    ArtistFragment artistFragment = (ArtistFragment) fragmentManager.findFragmentByTag(ArtistFragment.FRAGMENT_TAG);
+                    if (artistFragment == null) {
+                        artistFragment = new ArtistFragment();
+                    }
+                    artistFragment.setArguments(parentFragment, artist);
 
+                    fragmentManager.beginTransaction()
+                            .setCustomAnimations(R.anim.frag_enter, R.anim.frag_exit, R.anim.frag_pop_enter, R.anim.frag_pop_exit)
+                            .replace(R.id.main_fragment_container, artistFragment, ArtistFragment.FRAGMENT_TAG)
+                            .addToBackStack(ArtistFragment.FRAGMENT_TAG)
+                            .commit();
                     break;
             }
         }
