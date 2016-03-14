@@ -1,10 +1,7 @@
 package de.teyzer.genie.ui;
 
-import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,7 +18,6 @@ import butterknife.ButterKnife;
 import de.teyzer.genie.R;
 import de.teyzer.genie.connect.Action;
 import de.teyzer.genie.data.DataManager;
-import de.teyzer.genie.data.DataProvider;
 import de.teyzer.genie.model.Album;
 import de.teyzer.genie.model.Artist;
 import de.teyzer.genie.model.Track;
@@ -64,6 +60,7 @@ public class MusicListFragment extends AbstractFragment {
 
         return root;
     }
+
     /**
      * Setzt den Suchmodus.
      *

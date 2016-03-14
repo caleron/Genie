@@ -62,8 +62,6 @@ public class LightFragment extends AbstractFragment implements View.OnClickListe
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
-    private DataProvider mListener;
-
     public LightFragment() {
         // Required empty public constructor
     }
