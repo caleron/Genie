@@ -70,6 +70,7 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     private UploadStatusDialogFragment uploadStatusDialogFragment = null;
 
     private DataProvider mListener;
+    private MusicTabPagerAdapter musicTabPagerAdapter;
 
     public MusicFragment() {
         musicFragment = this;
@@ -105,8 +106,8 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
          * der Fragmente nicht richtig. Sie werden dann nicht neu angezeigt, nachdem das
          * MusicFragment im Hintergrund war.
          */
-        MusicTabPagerAdapter mMusicTabPagerAdapter = new MusicTabPagerAdapter(getChildFragmentManager());
-        musicListPager.setAdapter(mMusicTabPagerAdapter);
+        musicTabPagerAdapter = new MusicTabPagerAdapter(getChildFragmentManager());
+        musicListPager.setAdapter(musicTabPagerAdapter);
         musicListPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -125,6 +126,10 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
 
             }
         });
+    }
+
+    public MusicListFragment getCurrentTabFragment() {
+        return (MusicListFragment) musicTabPagerAdapter.getItem(tabLayout.getSelectedTabPosition());
     }
 
 
@@ -493,11 +498,6 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
             }
             return "Errora";
         }
-
-        public void pauseFragments() {
-            titleListFrag.onPause();
-
-        }
     }
 
     public class SearchListener implements MenuItemCompat.OnActionExpandListener, SearchView.OnQueryTextListener {
@@ -507,6 +507,7 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
             //Tabbar und playerBar verstecken
             playerBar.setVisibility(View.GONE);
             tabLayout.setVisibility(View.GONE);
+            getCurrentTabFragment().setSearchMode(true);
             return true;
         }
 
@@ -515,16 +516,19 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
             //Tabbar und playerBar wieder anzeigen
             playerBar.setVisibility(View.VISIBLE);
             tabLayout.setVisibility(View.VISIBLE);
+            getCurrentTabFragment().setSearchMode(false);
             return true;
         }
 
         @Override
         public boolean onQueryTextSubmit(String query) {
+            getCurrentTabFragment().updateSearchString(query);
             return false;
         }
 
         @Override
         public boolean onQueryTextChange(String newText) {
+            getCurrentTabFragment().updateSearchString(newText);
             return false;
         }
     }

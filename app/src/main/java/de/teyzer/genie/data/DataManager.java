@@ -470,6 +470,72 @@ public class DataManager {
     }
 
     /**
+     * Sucht Tracks zu einem Titel heraus. Falls der Suchbegriff ein leerer String ist, werden
+     * alle Tracks zurückgegeben.
+     *
+     * @param title Der Suchtitel
+     * @return Liste passender Tracks
+     */
+    public ArrayList<Track> findTracks(String title) {
+        title = title.toLowerCase();
+        ArrayList<Track> result = new ArrayList<>();
+
+        for (int i = 0, size = tracks.size(); i < size; i++) {
+            Track track = tracks.valueAt(i);
+
+            if (title.length() == 0 || track.getTitle().toLowerCase().contains(title)) {
+                result.add(track);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Sucht Künstler nach einem Suchbegriff heraus. Falls der Suchbegriff ein leerer String ist,
+     * werden alle Künstler zurückgegeben.
+     *
+     * @param title Der Suchbegriff
+     * @return Liste passender Interpreten
+     */
+    public ArrayList<Artist> findArtists(String title) {
+        if (title.length() == 0) {
+            return artists;
+        }
+
+        title = title.toLowerCase();
+        ArrayList<Artist> result = new ArrayList<>();
+
+        for (Artist artist : artists) {
+            if (artist.getName().toLowerCase().contains(title)) {
+                result.add(artist);
+            }
+        }
+        return result;
+    }
+
+    /**
+     * Sucht Alben nach einem Suchbegriff heraus. Falls der Suchbegriff ein leerer String ist, werden
+     * alle Alben zurückgegeben.
+     *
+     * @param title Der Suchbegriff
+     * @return Liste passender Alben
+     */
+    public ArrayList<Album> findAlbums(String title) {
+        if (title.length() == 0) {
+            return albums;
+        }
+        title = title.toLowerCase();
+        ArrayList<Album> result = new ArrayList<>();
+
+        for (Album album : albums) {
+            if (album.getAlbumName().toLowerCase().contains(title)) {
+                result.add(album);
+            }
+        }
+        return result;
+    }
+
+    /**
      * Gibt die Liste aller Tracks zurück
      *
      * @return SparseArray aus Tracks
@@ -494,5 +560,13 @@ public class DataManager {
 
     public Artist getArtistAt(int position) {
         return artists.get(position);
+    }
+
+    public ArrayList<Album> getAlbums() {
+        return albums;
+    }
+
+    public ArrayList<Artist> getArtists() {
+        return artists;
     }
 }

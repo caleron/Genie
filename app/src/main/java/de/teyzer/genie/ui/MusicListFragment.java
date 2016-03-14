@@ -7,12 +7,14 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.File;
+import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -33,11 +35,16 @@ public class MusicListFragment extends Fragment {
     RecyclerView trackListView;
 
     private MusicAdapter musicAdapter;
-
     private DataProvider mListener;
     private MusicFragment parentFragment;
 
     private int displayMode;
+    private boolean searchMode = false;
+    private boolean isEmptySearchString = true;
+
+    ArrayList<Track> searchTracks = new ArrayList<>();
+    ArrayList<Artist> searchArtists = new ArrayList<>();
+    ArrayList<Album> searchAlbums = new ArrayList<>();
 
     public void setArguments(MusicFragment parentFragment, int mode) {
         this.parentFragment = parentFragment;
@@ -57,18 +64,6 @@ public class MusicListFragment extends Fragment {
         trackListView.setAdapter(musicAdapter);
 
         return root;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        System.out.println("MusicListFragment.onResume" + displayMode);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        System.out.println("MusicListFragment.onPause" + displayMode);
     }
 
     @Override
@@ -100,6 +95,40 @@ public class MusicListFragment extends Fragment {
     }
 
     /**
+     * Setzt den Suchmodus.
+     *
+     * @param searchMode True, wenn Suchlisten verwendet werden sollen.
+     */
+    public void setSearchMode(boolean searchMode) {
+        this.searchMode = searchMode;
+        isEmptySearchString = true;
+        if (!searchMode) {
+            musicAdapter.notifyDataSetChanged();
+        }
+    }
+
+    public void updateSearchString(String text) {
+        DataManager dataManager = mListener.getDataManager();
+        if (text.length() == 0) {
+            isEmptySearchString = true;
+        } else {
+            isEmptySearchString = false;
+            switch (displayMode) {
+                case MODE_TITLE:
+                    searchTracks = dataManager.findTracks(text);
+                    break;
+                case MODE_ALBUM:
+                    searchAlbums = dataManager.findAlbums(text);
+                    break;
+                case MODE_ARTIST:
+                    searchArtists = dataManager.findArtists(text);
+                    break;
+            }
+        }
+        musicAdapter.notifyDataSetChanged();
+    }
+
+    /**
      * Adapter zum Darstellen der Musiktitel in der Liste
      */
     private class MusicAdapter extends RecyclerView.Adapter<ViewHolder> {
@@ -124,15 +153,30 @@ public class MusicListFragment extends Fragment {
             //Bindet einen neuen Track an einen bestehenden ViewHolder
             switch (displayMode) {
                 case MODE_TITLE:
-                    Track track = dataManager.getTrackAt(position);
+                    Track track;
+                    if (searchMode && !isEmptySearchString) {
+                        track = searchTracks.get(position);
+                    } else {
+                        track = dataManager.getTrackAt(position);
+                    }
                     holder.bindTrack(track);
                     break;
                 case MODE_ALBUM:
-                    Album album = dataManager.getAlbumAt(position);
+                    Album album;
+                    if (searchMode && !isEmptySearchString) {
+                        album = searchAlbums.get(position);
+                    } else {
+                        album = dataManager.getAlbumAt(position);
+                    }
                     holder.bindAlbum(album);
                     break;
                 case MODE_ARTIST:
-                    Artist artist = dataManager.getArtistAt(position);
+                    Artist artist;
+                    if (searchMode && !isEmptySearchString) {
+                        artist = searchArtists.get(position);
+                    } else {
+                        artist = dataManager.getArtistAt(position);
+                    }
                     holder.bindArtist(artist);
                     break;
             }
@@ -140,7 +184,29 @@ public class MusicListFragment extends Fragment {
 
         @Override
         public int getItemCount() {
-            return dataManager.getTracks().size();
+            switch (displayMode) {
+                case MODE_TITLE:
+                    if (searchMode && !isEmptySearchString) {
+                        return searchTracks.size();
+                    } else {
+                        return dataManager.getTracks().size();
+                    }
+                case MODE_ALBUM:
+                    if (searchMode && !isEmptySearchString) {
+                        return searchAlbums.size();
+                    } else {
+                        return dataManager.getAlbums().size();
+                    }
+                case MODE_ARTIST:
+                    if (searchMode && !isEmptySearchString) {
+                        return searchArtists.size();
+                    } else {
+                        return dataManager.getArtists().size();
+                    }
+                default:
+                    Log.e(this.toString(), "Incorrect display mode = " + displayMode);
+                    return 0;
+            }
         }
     }
 
