@@ -21,5 +21,8 @@
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
     </android.support.design.widget.CoordinatorLayout>
 
-    <include layout="@layout/bar_player" />
+    <de.teyzer.genie.ui.custom.PlayerBar
+        android:id="@+id/music_player_bar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
 </LinearLayout>

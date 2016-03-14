@@ -30,7 +30,7 @@ import de.teyzer.genie.model.Product;
 import de.teyzer.genie.scanner.IntentIntegrator;
 import de.teyzer.genie.scanner.IntentResult;
 
-public class FoodListFragment extends Fragment {
+public class FoodListFragment extends AbstractFragment {
     public static final String FRAGMENT_TAG = "food_list";
 
     public static final int REQUEST_NEW_FOOD_TYPE = 0;
@@ -46,7 +46,6 @@ public class FoodListFragment extends Fragment {
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
-    private DataProvider mListener;
     private FoodAdapter mAdapter;
     private FoodListFragment foodListFragment;
 
@@ -84,34 +83,6 @@ public class FoodListFragment extends Fragment {
         // Inflate the menu; this adds items to the action bar if it is present.
         //Wird einmal beim laden der Activity ausgeführt
         inflater.inflate(R.menu.fragment_food_list, menu);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mListener = (DataProvider) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (DataProvider) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @Override
@@ -271,12 +242,6 @@ public class FoodListFragment extends Fragment {
             int id = data.getIntExtra(NewProductActivity.RESULT_ID, 0);
             manager.updateProduct(id, name, store, foodType, packSize, barcode);
         }
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
     }
 
     @OnClick(R.id.food_list_fab)

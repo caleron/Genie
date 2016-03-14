@@ -1,8 +1,6 @@
 package de.teyzer.genie.ui;
 
 
-import android.app.Activity;
-import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -30,7 +28,7 @@ import de.teyzer.genie.data.DataProvider;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class LightFragment extends Fragment implements View.OnClickListener, ColorPicker.OnColorChangedListener, ColorPicker.OnColorSelectedListener, SeekBar.OnSeekBarChangeListener, RadioGroup.OnCheckedChangeListener {
+public class LightFragment extends AbstractFragment implements View.OnClickListener, ColorPicker.OnColorChangedListener, ColorPicker.OnColorSelectedListener, SeekBar.OnSeekBarChangeListener, RadioGroup.OnCheckedChangeListener {
     public static final String FRAGMENT_TAG = "light_fragment";
 
     @Bind(R.id.light_white_seekbar)
@@ -106,40 +104,6 @@ public class LightFragment extends Fragment implements View.OnClickListener, Col
         super.onResume();
         revalidateColorMode();
         revalidateManuallyMode();
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof DataProvider) {
-            mListener = (DataProvider) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement DataProvider");
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof DataProvider) {
-            mListener = (DataProvider) activity;
-        } else {
-            throw new RuntimeException(activity.toString()
-                    + " must implement DataProvider");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
     }
 
     @OnClick(R.id.light_rgb_manually_switch)

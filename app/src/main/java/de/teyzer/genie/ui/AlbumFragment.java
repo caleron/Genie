@@ -1,10 +1,7 @@
 package de.teyzer.genie.ui;
 
-import android.app.Activity;
-import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -20,17 +17,18 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.teyzer.genie.R;
 import de.teyzer.genie.connect.Action;
-import de.teyzer.genie.data.DataProvider;
 import de.teyzer.genie.model.Album;
 import de.teyzer.genie.model.Track;
+import de.teyzer.genie.ui.custom.PlayerBar;
 
-public class AlbumFragment extends Fragment {
+public class AlbumFragment extends AbstractFragment {
 
-    DataProvider mListener;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
     @Bind(R.id.album_track_list)
     RecyclerView trackListView;
+    @Bind(R.id.album_player_bar)
+    PlayerBar playerBar;
 
     private MusicAdapter musicAdapter;
     private AlbumFragment albumFragment;
@@ -71,32 +69,18 @@ public class AlbumFragment extends Fragment {
         displayTracks = album.getTracks();
     }
 
+
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof DataProvider) {
-            mListener = (DataProvider) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
+    public void onResume() {
+        super.onResume();
+        //Playerstate neu abfragen
+        playerBar.requestStatusRefresh();
     }
 
     @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof DataProvider) {
-            mListener = (DataProvider) activity;
-        } else {
-            throw new RuntimeException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
+    public void onPause() {
+        super.onPause();
+        playerBar.destroyTimer();
     }
 
     /**
@@ -164,7 +148,7 @@ public class AlbumFragment extends Fragment {
             File f = new File(track.getPath());
             Uri uri = Uri.fromFile(f);
             System.out.println(uri);
-            mListener.getServerConnect().executeAction(Action.playFile(uri, musicFragment, musicFragment));
+            mListener.getServerConnect().executeAction(Action.playFile(uri, playerBar, musicFragment));
         }
     }
 }

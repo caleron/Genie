@@ -26,7 +26,7 @@ import de.teyzer.genie.model.Album;
 import de.teyzer.genie.model.Artist;
 import de.teyzer.genie.model.Track;
 
-public class MusicListFragment extends Fragment {
+public class MusicListFragment extends AbstractFragment {
     public static final int MODE_TITLE = 0;
     public static final int MODE_ARTIST = 1;
     public static final int MODE_ALBUM = 2;
@@ -35,7 +35,6 @@ public class MusicListFragment extends Fragment {
     RecyclerView trackListView;
 
     private MusicAdapter musicAdapter;
-    private DataProvider mListener;
     private MusicFragment parentFragment;
 
     private int displayMode;
@@ -65,35 +64,6 @@ public class MusicListFragment extends Fragment {
 
         return root;
     }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof DataProvider) {
-            mListener = (DataProvider) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof DataProvider) {
-            mListener = (DataProvider) activity;
-        } else {
-            throw new RuntimeException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
     /**
      * Setzt den Suchmodus.
      *
