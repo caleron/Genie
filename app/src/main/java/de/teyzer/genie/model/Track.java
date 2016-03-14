@@ -1,16 +1,23 @@
 package de.teyzer.genie.model;
 
 public class Track {
+    private int id;
+
     private String title;
     private String artist;
     private String album;
     private String path;
 
-    public Track(String title, String artist, String album, String path) {
+    public Track(int id, String title, String artist, String album, String path) {
+        this.id = id;
         this.title = title;
         this.artist = artist;
         this.album = album;
         this.path = path;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public String getTitle() {

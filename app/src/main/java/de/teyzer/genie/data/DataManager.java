@@ -24,7 +24,7 @@ public class DataManager {
     private SparseArray<FoodType> foodTypes;
     private SparseArray<Product> products;
 
-    private SparseArray<Track> tracks;
+    private ArrayList<Track> tracks;
     private ArrayList<Artist> artists;
     private ArrayList<Album> albums;
 
@@ -89,7 +89,7 @@ public class DataManager {
     }
 
     private void loadTracks() {
-        tracks = new SparseArray<>();
+        tracks = new ArrayList<>();
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         try {
@@ -104,8 +104,8 @@ public class DataManager {
                 String album = cursor.getString(cursor.getColumnIndexOrThrow(DbContract.TrackEntry.COLUMN_ALBUM));
                 String path = cursor.getString(cursor.getColumnIndexOrThrow(DbContract.TrackEntry.COLUMN_PATH));
 
-                Track track = new Track(title, artist, album, path);
-                tracks.put(id, track);
+                Track track = new Track(id, title, artist, album, path);
+                tracks.add(track);
             }
             cursor.close();
         } catch (Exception ex) {
@@ -120,7 +120,7 @@ public class DataManager {
         artists = new ArrayList<>();
 
         for (int i = 0, size = tracks.size(); i < size; i++) {
-            Track track = tracks.valueAt(i);
+            Track track = tracks.get(i);
 
             //Künstler raussuchen
             Artist artist = null;
@@ -153,7 +153,7 @@ public class DataManager {
                 artist.addAlbum(track.getAlbum(), album);
             }
             //Track zum Album hinzufügen
-            album.addTrack(tracks.keyAt(0), track);
+            album.addTrack(track);
         }
 
         //Alben sortieren
@@ -374,7 +374,7 @@ public class DataManager {
         ArrayList<Integer> deleteDbTracks = new ArrayList<>();
 
         for (int i = 0; i < tracks.size(); i++) {
-            Track dbTrack = tracks.valueAt(i);
+            Track dbTrack = tracks.get(i);
 
             boolean found = false;
             for (Track newTrack : newTracks) {
@@ -387,7 +387,7 @@ public class DataManager {
 
             if (!found) {
                 //Track ist nicht mehr vorhanden --> entfernen
-                deleteDbTracks.add(tracks.keyAt(i));
+                deleteDbTracks.add(dbTrack.getId());
             }
         }
 
@@ -447,9 +447,9 @@ public class DataManager {
         values.put(DbContract.TrackEntry.COLUMN_PATH, path);
 
         int id = (int) db.insert(DbContract.TrackEntry.TABLE_NAME, null, values);
-        Track track = new Track(title, artist, album, path);
+        Track track = new Track(id, title, artist, album, path);
 
-        tracks.put(id, track);
+        tracks.add(track);
 
         return track;
     }
@@ -477,13 +477,15 @@ public class DataManager {
      * @return Liste passender Tracks
      */
     public ArrayList<Track> findTracks(String title) {
+        if (title.length() == 0) {
+            return tracks;
+        }
+
         title = title.toLowerCase();
         ArrayList<Track> result = new ArrayList<>();
 
-        for (int i = 0, size = tracks.size(); i < size; i++) {
-            Track track = tracks.valueAt(i);
-
-            if (title.length() == 0 || track.getTitle().toLowerCase().contains(title)) {
+        for (Track track : tracks) {
+            if (track.getTitle().toLowerCase().contains(title)) {
                 result.add(track);
             }
         }
@@ -540,7 +542,7 @@ public class DataManager {
      *
      * @return SparseArray aus Tracks
      */
-    public SparseArray<Track> getTracks() {
+    public ArrayList<Track> getTracks() {
         return tracks;
     }
 
@@ -551,7 +553,7 @@ public class DataManager {
      * @return Track
      */
     public Track getTrackAt(int index) {
-        return tracks.valueAt(index);
+        return tracks.get(index);
     }
 
     public Album getAlbumAt(int position) {

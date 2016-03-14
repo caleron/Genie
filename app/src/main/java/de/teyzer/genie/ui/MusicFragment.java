@@ -151,19 +151,6 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        //Wird beim Klick auf ein Button in der Actionbar ausgelöst
-        /*
-        int id = item.getItemId();
-
-        if (id == R.id.food_list_menu_add_food_type) {
-
-        }
-        */
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
         //Playerstate neu abfragen
@@ -174,6 +161,7 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
     public void onPause() {
         super.onPause();
 
+        //Timer zurücksetzen
         if (playProgressTimer != null) {
             playProgressTimer.cancel();
             playProgressTimer = null;
@@ -500,6 +488,9 @@ public class MusicFragment extends Fragment implements UploadStatusListener, Res
         }
     }
 
+    /**
+     * Reagiert auf Events vom Suchfeld. Für die Suche werden playerBar und tabLayout versteckt.
+     */
     public class SearchListener implements MenuItemCompat.OnActionExpandListener, SearchView.OnQueryTextListener {
 
         @Override

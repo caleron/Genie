@@ -76,7 +76,7 @@ public class MediaScanner implements Prefs {
                     path = cursor.getString(3);
 
                     if (path.toLowerCase().endsWith(".mp3")) {
-                        Track track = new Track(title, artist, album, path);
+                        Track track = new Track(-1, title, artist, album, path);
                         songs.add(track);
                     }
                     cursor.moveToNext();

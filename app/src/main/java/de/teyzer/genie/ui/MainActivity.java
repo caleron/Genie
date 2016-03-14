@@ -146,6 +146,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
+        //Serververbindung trennen, wenn die Activity nicht mehr sichtbar ist
         serverConnect.disconnect();
         super.onStop();
     }

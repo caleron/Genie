@@ -1,20 +1,20 @@
 package de.teyzer.genie.model;
 
-import android.util.SparseArray;
+import java.util.ArrayList;
 
 public class Album {
     String artistName;
     String albumName;
-    SparseArray<Track> tracks;
+    ArrayList<Track> tracks;
 
     public Album(String albumName, String artistName) {
-        tracks = new SparseArray<>();
+        tracks = new ArrayList<>();
         this.artistName = artistName;
         this.albumName = albumName;
     }
 
-    public void addTrack(int id, Track track) {
-        tracks.put(id, track);
+    public void addTrack(Track track) {
+        tracks.add(track);
     }
 
     public String getAlbumName() {
@@ -23,5 +23,9 @@ public class Album {
 
     public String getArtistName() {
         return artistName;
+    }
+
+    public ArrayList<Track> getTracks() {
+        return tracks;
     }
 }
