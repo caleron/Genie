@@ -35,32 +35,33 @@ public class MusicListFragment extends AbstractFragment {
     private MusicFragment parentFragment;
 
     private int displayMode;
-    private boolean searchMode = false;
-    private boolean isEmptySearchString = true;
-
-    ArrayList<Track> searchTracks;
-    ArrayList<Artist> searchArtists;
-    ArrayList<Album> searchAlbums;
 
     ArrayList<Track> displayTracks;
     ArrayList<Artist> displayArtists;
     ArrayList<Album> displayAlbums;
 
+    ArrayList<Track> allTracks;
+    ArrayList<Artist> allArtists;
+    ArrayList<Album> allAlbums;
+
     public void setTrackMode(MusicFragment parentFragment, ArrayList<Track> tracks) {
         this.parentFragment = parentFragment;
         this.displayMode = MODE_TITLE;
+        allTracks = tracks;
         displayTracks = tracks;
     }
 
     public void setAlbumMode(MusicFragment parentFragment, ArrayList<Album> albums) {
         this.parentFragment = parentFragment;
         this.displayMode = MODE_ALBUM;
+        allAlbums = albums;
         displayAlbums = albums;
     }
 
     public void setArtistMode(MusicFragment parentFragment, ArrayList<Artist> artists) {
         this.parentFragment = parentFragment;
         this.displayMode = MODE_ARTIST;
+        allArtists = artists;
         displayArtists = artists;
     }
 
@@ -88,13 +89,13 @@ public class MusicListFragment extends AbstractFragment {
      */
     public ArrayList<Track> findTracks(String title) {
         if (title.length() == 0) {
-            return displayTracks;
+            return allTracks;
         }
 
         title = title.toLowerCase();
         ArrayList<Track> result = new ArrayList<>();
 
-        for (Track track : displayTracks) {
+        for (Track track : allTracks) {
             if (track.getTitle().toLowerCase().contains(title)) {
                 result.add(track);
             }
@@ -111,13 +112,13 @@ public class MusicListFragment extends AbstractFragment {
      */
     public ArrayList<Artist> findArtists(String title) {
         if (title.length() == 0) {
-            return displayArtists;
+            return allArtists;
         }
 
         title = title.toLowerCase();
         ArrayList<Artist> result = new ArrayList<>();
 
-        for (Artist artist : displayArtists) {
+        for (Artist artist : allArtists) {
             if (artist.getName().toLowerCase().contains(title)) {
                 result.add(artist);
             }
@@ -134,12 +135,12 @@ public class MusicListFragment extends AbstractFragment {
      */
     public ArrayList<Album> findAlbums(String title) {
         if (title.length() == 0) {
-            return displayAlbums;
+            return allAlbums;
         }
         title = title.toLowerCase();
         ArrayList<Album> result = new ArrayList<>();
 
-        for (Album album : displayAlbums) {
+        for (Album album : allAlbums) {
             if (album.getAlbumName().toLowerCase().contains(title)) {
                 result.add(album);
             }
@@ -153,29 +154,26 @@ public class MusicListFragment extends AbstractFragment {
      * @param searchMode True, wenn Suchlisten verwendet werden sollen.
      */
     public void setSearchMode(boolean searchMode) {
-        this.searchMode = searchMode;
-        isEmptySearchString = true;
         if (!searchMode) {
+            //Wenn deaktiviert
+            displayTracks = allTracks;
+            displayAlbums = allAlbums;
+            displayArtists = allArtists;
             musicAdapter.notifyDataSetChanged();
         }
     }
 
     public void updateSearchString(String text) {
-        if (text.length() == 0) {
-            isEmptySearchString = true;
-        } else {
-            isEmptySearchString = false;
-            switch (displayMode) {
-                case MODE_TITLE:
-                    searchTracks = findTracks(text);
-                    break;
-                case MODE_ALBUM:
-                    searchAlbums = findAlbums(text);
-                    break;
-                case MODE_ARTIST:
-                    searchArtists = findArtists(text);
-                    break;
-            }
+        switch (displayMode) {
+            case MODE_TITLE:
+                displayTracks = findTracks(text);
+                break;
+            case MODE_ALBUM:
+                displayAlbums = findAlbums(text);
+                break;
+            case MODE_ARTIST:
+                displayArtists = findArtists(text);
+                break;
         }
         musicAdapter.notifyDataSetChanged();
     }
@@ -203,29 +201,17 @@ public class MusicListFragment extends AbstractFragment {
             switch (displayMode) {
                 case MODE_TITLE:
                     Track track;
-                    if (searchMode && !isEmptySearchString) {
-                        track = searchTracks.get(position);
-                    } else {
-                        track = displayTracks.get(position);
-                    }
+                    track = displayTracks.get(position);
                     holder.bindTrack(track);
                     break;
                 case MODE_ALBUM:
                     Album album;
-                    if (searchMode && !isEmptySearchString) {
-                        album = searchAlbums.get(position);
-                    } else {
-                        album = displayAlbums.get(position);
-                    }
+                    album = displayAlbums.get(position);
                     holder.bindAlbum(album);
                     break;
                 case MODE_ARTIST:
                     Artist artist;
-                    if (searchMode && !isEmptySearchString) {
-                        artist = searchArtists.get(position);
-                    } else {
-                        artist = displayArtists.get(position);
-                    }
+                    artist = displayArtists.get(position);
                     holder.bindArtist(artist);
                     break;
             }
@@ -235,23 +221,11 @@ public class MusicListFragment extends AbstractFragment {
         public int getItemCount() {
             switch (displayMode) {
                 case MODE_TITLE:
-                    if (searchMode && !isEmptySearchString) {
-                        return searchTracks.size();
-                    } else {
-                        return displayTracks.size();
-                    }
+                    return displayTracks.size();
                 case MODE_ALBUM:
-                    if (searchMode && !isEmptySearchString) {
-                        return searchAlbums.size();
-                    } else {
-                        return displayAlbums.size();
-                    }
+                    return displayAlbums.size();
                 case MODE_ARTIST:
-                    if (searchMode && !isEmptySearchString) {
-                        return searchArtists.size();
-                    } else {
-                        return displayArtists.size();
-                    }
+                    return displayArtists.size();
                 default:
                     Log.e(this.toString(), "Incorrect display mode = " + displayMode);
                     return 0;
@@ -264,7 +238,6 @@ public class MusicListFragment extends AbstractFragment {
      * Verwaltet einen Eintrag in der RecyclerView
      */
     private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        View itemView;
         TextView titleView;
         TextView subTitleView;
 
@@ -274,12 +247,8 @@ public class MusicListFragment extends AbstractFragment {
 
         public ViewHolder(View itemView) {
             super(itemView);
-            this.itemView = itemView;
-
             titleView = (TextView) itemView.findViewById(R.id.titleText);
             subTitleView = (TextView) itemView.findViewById(R.id.subTitleText);
-
-            this.itemView = itemView;
 
             itemView.setOnClickListener(this);
         }
@@ -309,12 +278,14 @@ public class MusicListFragment extends AbstractFragment {
         public void onClick(View v) {
             switch (displayMode) {
                 case MODE_TITLE:
+                    //Datei abspielen
                     File f = new File(track.getPath());
                     Uri uri = Uri.fromFile(f);
                     System.out.println(uri);
                     mListener.getServerConnect().executeAction(Action.playFile(uri, parentFragment, parentFragment));
                     break;
                 case MODE_ALBUM:
+                    //Album anzeigen
                     FragmentManager fragmentManager = mListener.getSupportFragmentManager();
                     AlbumFragment fragment = (AlbumFragment) fragmentManager.findFragmentByTag(AlbumFragment.FRAGMENT_TAG);
                     if (fragment == null) {
@@ -329,6 +300,7 @@ public class MusicListFragment extends AbstractFragment {
                             .commit();
                     break;
                 case MODE_ARTIST:
+                    //Künstler anzeigen
                     fragmentManager = mListener.getSupportFragmentManager();
                     ArtistFragment artistFragment = (ArtistFragment) fragmentManager.findFragmentByTag(ArtistFragment.FRAGMENT_TAG);
                     if (artistFragment == null) {
