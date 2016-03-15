@@ -1,4 +1,4 @@
-package de.teyzer.genie.ui;
+package de.teyzer.genie.ui.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -21,7 +21,6 @@ import de.teyzer.genie.connect.Action;
 import de.teyzer.genie.model.Album;
 import de.teyzer.genie.model.Artist;
 import de.teyzer.genie.model.Track;
-import de.teyzer.genie.ui.custom.ArtistFragment;
 
 public class MusicListFragment extends AbstractFragment {
     public static final int MODE_TITLE = 0;

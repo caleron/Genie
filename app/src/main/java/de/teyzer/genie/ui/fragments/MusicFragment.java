@@ -1,5 +1,7 @@
-package de.teyzer.genie.ui.custom;
+package de.teyzer.genie.ui.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -19,32 +21,37 @@ import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.teyzer.genie.R;
-import de.teyzer.genie.model.Artist;
-import de.teyzer.genie.ui.AbstractFragment;
-import de.teyzer.genie.ui.MusicFragment;
-import de.teyzer.genie.ui.MusicListFragment;
+import de.teyzer.genie.connect.Action;
+import de.teyzer.genie.connect.ResponseListener;
+import de.teyzer.genie.connect.UploadStatusListener;
+import de.teyzer.genie.ui.custom.PlayerBar;
+import de.teyzer.genie.ui.dialogs.UploadStatusDialogFragment;
 
-public class ArtistFragment extends AbstractFragment {
-    public static final String FRAGMENT_TAG = "artist_fragment";
 
+public class MusicFragment extends AbstractFragment implements UploadStatusListener, ResponseListener {
+    public static final String FRAGMENT_TAG = "music_control";
+    public static final int REQUEST_SHOW_PROGRESS = 0;
+
+    private static MusicFragment musicFragment;
+
+    @Bind(R.id.music_list_pager)
+    ViewPager musicListPager;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
-    @Bind(R.id.music_player_bar)
-    PlayerBar playerBar;
-    @Bind(R.id.music_list_pager)
-    ViewPager viewPager;
     @Bind(R.id.tab_layout)
     TabLayout tabLayout;
+    @Bind(R.id.music_player_bar)
+    PlayerBar playerBar;
 
-    ArtistFragment artistFragment;
-
+    private UploadStatusDialogFragment uploadStatusDialogFragment = null;
     private MusicTabPagerAdapter musicTabPagerAdapter;
-    Artist displayArtist;
-    private MusicFragment musicFragment;
-    private MenuItem searchItem;
 
-    public ArtistFragment() {
-        artistFragment = this;
+    public MusicFragment() {
+        musicFragment = this;
+    }
+
+    public static MusicFragment getInstance() {
+        return musicFragment;
     }
 
     @Override
@@ -54,10 +61,7 @@ public class ArtistFragment extends AbstractFragment {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_music, container, false);
         ButterKnife.bind(this, root);
 
-        mListener.setSupportActionBar(toolbar, true);
-
-        //Titel setzen
-        toolbar.setTitle(displayArtist.getName());
+        mListener.setSupportActionBar(toolbar);
 
         playerBar.setDataProvider(mListener);
 
@@ -68,6 +72,7 @@ public class ArtistFragment extends AbstractFragment {
 
     private void initTabs() {
         tabLayout.addTab(tabLayout.newTab().setText("Titel"));
+        tabLayout.addTab(tabLayout.newTab().setText("Künstler"));
         tabLayout.addTab(tabLayout.newTab().setText("Alben"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
@@ -77,16 +82,13 @@ public class ArtistFragment extends AbstractFragment {
          * MusicFragment im Hintergrund war.
          */
         musicTabPagerAdapter = new MusicTabPagerAdapter(getChildFragmentManager());
-        viewPager.setAdapter(musicTabPagerAdapter);
-        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        musicListPager.setAdapter(musicTabPagerAdapter);
+        musicListPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                //Such-Button nur anzeigen, wenn der Titel-Tab ausgewählt ist
-                searchItem.setVisible(tab.getPosition() == 0);
-
-                viewPager.setCurrentItem(tab.getPosition());
+                musicListPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -101,24 +103,86 @@ public class ArtistFragment extends AbstractFragment {
         });
     }
 
+    public MusicListFragment getCurrentTabFragment() {
+        return (MusicListFragment) musicTabPagerAdapter.getItem(tabLayout.getSelectedTabPosition());
+    }
+
+
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        //Wird einmal beim laden der Activity ausgeführt
         inflater.inflate(R.menu.search_menu, menu);
 
         //Suchfeld raussuchen
-        searchItem = menu.findItem(R.id.action_search);
+        MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) searchItem.getActionView();
 
         //Listener setzen
         SearchListener searchListener = new SearchListener();
         MenuItemCompat.setOnActionExpandListener(searchItem, searchListener);
         searchView.setOnQueryTextListener(searchListener);
+
     }
 
-    public void setArguments(MusicFragment parentFragment, Artist artist) {
-        musicFragment = parentFragment;
-        displayArtist = artist;
+    @Override
+    public void onResume() {
+        super.onResume();
+        //Playerstate neu abfragen TODO testen obs ohne funktioniert wg PlayerBar.onAttachedToWindow
+        //playerBar.requestStatusRefresh();
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        //playerBar.destroyTimer();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        //Zum upload abbrechen, noch nicht implementiert
+        if (requestCode == REQUEST_SHOW_PROGRESS && resultCode == Activity.RESULT_CANCELED) {
+            uploadStatusDialogFragment = null;
+        }
+    }
+
+    /**
+     * Updated den Upload-Status
+     *
+     * @param text            Statustext
+     * @param progressPercent Prozentualer Forschritt, über 100 wenn fertiggestellt.
+     */
+    @Override
+    public void updateStatus(String text, int progressPercent) {
+        if (uploadStatusDialogFragment == null) {
+            uploadStatusDialogFragment = new UploadStatusDialogFragment();
+            uploadStatusDialogFragment.setTargetFragment(musicFragment, REQUEST_SHOW_PROGRESS);
+
+            uploadStatusDialogFragment.show(getFragmentManager(), UploadStatusDialogFragment.FRAGMENT_TAG);
+            uploadStatusDialogFragment.updateStatus(text, Math.max(progressPercent, 0));
+        } else {
+            if (progressPercent > 100) {
+                uploadStatusDialogFragment.dismiss();
+                uploadStatusDialogFragment = null;
+            } else {
+                uploadStatusDialogFragment.updateStatus(text, Math.max(progressPercent, 0));
+            }
+        }
+    }
+
+    /**
+     * Wird ausgelöst, wenn eine Status-Antwort vom Server gekommen ist
+     *
+     * @param sourceAction Die Ursprungsaktion
+     * @param response     Die Antwort
+     */
+    @Override
+    public void responseReceived(Action sourceAction, String response) {
+        playerBar.responseReceived(sourceAction, response);
+    }
+
 
     /**
      * Wählt Passend zum Tabindex das richtige Tabfragment aus
@@ -126,15 +190,19 @@ public class ArtistFragment extends AbstractFragment {
     public class MusicTabPagerAdapter extends FragmentStatePagerAdapter {
 
         MusicListFragment titleListFrag;
+        MusicListFragment artistListFrag;
         MusicListFragment albumListFrag;
 
         public MusicTabPagerAdapter(FragmentManager fm) {
             super(fm);
             titleListFrag = new MusicListFragment();
-            titleListFrag.setTrackMode(musicFragment, displayArtist.getAllTracks());
+            titleListFrag.setTrackMode(musicFragment, mListener.getDataManager().getTracks());
+
+            artistListFrag = new MusicListFragment();
+            artistListFrag.setArtistMode(musicFragment, mListener.getDataManager().getArtists());
 
             albumListFrag = new MusicListFragment();
-            albumListFrag.setAlbumMode(musicFragment, displayArtist.getAlbums());
+            albumListFrag.setAlbumMode(musicFragment, mListener.getDataManager().getAlbums());
         }
 
         @Override
@@ -143,6 +211,8 @@ public class ArtistFragment extends AbstractFragment {
                 case 0:
                     return titleListFrag;
                 case 1:
+                    return artistListFrag;
+                case 2:
                     return albumListFrag;
             }
             return titleListFrag;
@@ -150,7 +220,7 @@ public class ArtistFragment extends AbstractFragment {
 
         @Override
         public int getCount() {
-            return 2;
+            return 3;
         }
 
         @Override
@@ -159,6 +229,8 @@ public class ArtistFragment extends AbstractFragment {
                 case 0:
                     return "Titel";
                 case 1:
+                    return "Künstler";
+                case 2:
                     return "Alben";
             }
             return "Errora";
@@ -175,7 +247,7 @@ public class ArtistFragment extends AbstractFragment {
             //Tabbar und playerBar verstecken
             playerBar.setVisibility(View.GONE);
             tabLayout.setVisibility(View.GONE);
-            ((MusicListFragment) musicTabPagerAdapter.getItem(0)).setSearchMode(true);
+            getCurrentTabFragment().setSearchMode(true);
             return true;
         }
 
@@ -184,19 +256,19 @@ public class ArtistFragment extends AbstractFragment {
             //Tabbar und playerBar wieder anzeigen
             playerBar.setVisibility(View.VISIBLE);
             tabLayout.setVisibility(View.VISIBLE);
-            ((MusicListFragment) musicTabPagerAdapter.getItem(0)).setSearchMode(false);
+            getCurrentTabFragment().setSearchMode(false);
             return true;
         }
 
         @Override
         public boolean onQueryTextSubmit(String query) {
-            ((MusicListFragment) musicTabPagerAdapter.getItem(0)).updateSearchString(query);
+            getCurrentTabFragment().updateSearchString(query);
             return false;
         }
 
         @Override
         public boolean onQueryTextChange(String newText) {
-            ((MusicListFragment) musicTabPagerAdapter.getItem(0)).updateSearchString(newText);
+            getCurrentTabFragment().updateSearchString(newText);
             return false;
         }
     }

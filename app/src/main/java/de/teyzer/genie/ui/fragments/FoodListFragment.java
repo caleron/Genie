@@ -1,11 +1,9 @@
-package de.teyzer.genie.ui;
+package de.teyzer.genie.ui.fragments;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -24,11 +22,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.teyzer.genie.R;
 import de.teyzer.genie.data.DataManager;
-import de.teyzer.genie.data.DataProvider;
 import de.teyzer.genie.model.FoodType;
 import de.teyzer.genie.model.Product;
 import de.teyzer.genie.scanner.IntentIntegrator;
 import de.teyzer.genie.scanner.IntentResult;
+import de.teyzer.genie.ui.NewFoodTypeActivity;
+import de.teyzer.genie.ui.NewProductActivity;
+import de.teyzer.genie.ui.dialogs.EditQuantityDialogFragment;
 
 public class FoodListFragment extends AbstractFragment {
     public static final String FRAGMENT_TAG = "food_list";

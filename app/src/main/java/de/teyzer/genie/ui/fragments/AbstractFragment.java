@@ -1,4 +1,4 @@
-package de.teyzer.genie.ui;
+package de.teyzer.genie.ui.fragments;
 
 import android.app.Activity;
 import android.content.Context;

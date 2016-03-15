@@ -1,4 +1,4 @@
-package de.teyzer.genie.ui;
+package de.teyzer.genie.ui.dialogs;
 
 import android.app.Activity;
 import android.app.AlertDialog;

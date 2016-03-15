@@ -1,4 +1,4 @@
-package de.teyzer.genie.ui;
+package de.teyzer.genie.ui.fragments;
 
 
 import android.graphics.Color;
@@ -23,7 +23,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.teyzer.genie.R;
 import de.teyzer.genie.connect.Action;
-import de.teyzer.genie.data.DataProvider;
 
 /**
  * A simple {@link Fragment} subclass.

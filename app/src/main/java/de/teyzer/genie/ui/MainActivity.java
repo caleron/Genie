@@ -16,7 +16,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -30,6 +29,11 @@ import de.teyzer.genie.data.DataManager;
 import de.teyzer.genie.data.DataProvider;
 import de.teyzer.genie.data.MediaScanner;
 import de.teyzer.genie.data.Prefs;
+import de.teyzer.genie.ui.fragments.FoodListFragment;
+import de.teyzer.genie.ui.fragments.LightFragment;
+import de.teyzer.genie.ui.fragments.MusicFragment;
+import de.teyzer.genie.ui.fragments.SettingsFragment;
+import de.teyzer.genie.ui.fragments.ToolsFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DataProvider, UploadStatusListener, SharedPreferences.OnSharedPreferenceChangeListener {
@@ -201,13 +205,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        Toast.makeText(this, "MainActivity ActivityResult", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     protected void onDestroy() {
         super.onDestroy();
         ButterKnife.unbind(this);
@@ -263,7 +260,11 @@ public class MainActivity extends AppCompatActivity
             }
             tag = MusicFragment.FRAGMENT_TAG;
         } else if (id == R.id.nav_manage) {
-
+            fragment = getSupportFragmentManager().findFragmentByTag(ToolsFragment.FRAGMENT_TAG);
+            if (fragment == null) {
+                fragment = new ToolsFragment();
+            }
+            tag = ToolsFragment.FRAGMENT_TAG;
         } else if (id == R.id.nav_share) {
 
         } else if (id == R.id.nav_send) {

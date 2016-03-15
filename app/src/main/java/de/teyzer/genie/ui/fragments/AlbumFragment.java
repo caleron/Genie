@@ -1,4 +1,4 @@
-package de.teyzer.genie.ui;
+package de.teyzer.genie.ui.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;

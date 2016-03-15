@@ -100,6 +100,10 @@ public class Action {
         return new Action("getStatus", null, listener);
     }
 
+    public static Action sendString(String contents) {
+        return new Action("sendString", new String[]{contents}, null);
+    }
+
 
     public void execute(Socket socket) throws IOException {
         //Befehlsstring basteln
@@ -118,6 +122,8 @@ public class Action {
         //Datei hochladen, falls notwendig
         if (command.equals("uploadAndPlayFile")) {
             uploadFile(os);
+        } else if (command.equals("sendString")) {
+            sendString(args[0], os);
         }
 
         //Antwort lesen
@@ -134,40 +140,56 @@ public class Action {
 
     private String getCommandString() {
         String action = command;
-        if (command.equals("playFile")) {
-            MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-            mmr.setDataSource(fileUri.getPath());
+        switch (command) {
+            case "playFile":
+                MediaMetadataRetriever mmr = new MediaMetadataRetriever();
+                mmr.setDataSource(fileUri.getPath());
 
-            String artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
-            String title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
+                String artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
+                String title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);
 
-            action += ";" + title;
-            action += ";" + artist;
+                action += ";" + title;
+                action += ";" + artist;
 
-        } else if (command.equals("uploadAndPlayFile")) {
-            File fileToSend = new File(fileUri.getPath());
+                break;
+            case "uploadAndPlayFile":
+                File fileToSend = new File(fileUri.getPath());
 
-            if (fileToSend.exists() && fileToSend.isFile()) {
+                if (fileToSend.exists() && fileToSend.isFile()) {
 
-                fileLength = fileToSend.length();
-                String fileName = fileToSend.getName();
+                    fileLength = fileToSend.length();
+                    String fileName = fileToSend.getName();
 
-                action += ";" + fileName;
-                action += ";" + fileLength;
-                System.out.println("File upload size: " + fileLength);
-            } else {
-                System.out.println("invalid file, cant upload");
-                return null;
-            }
-        } else {
-            if (args != null) {
-                for (String arg : args) {
-                    action += ";" + arg;
+                    action += ";" + fileName;
+                    action += ";" + fileLength;
+                    System.out.println("File upload size: " + fileLength);
+                } else {
+                    System.out.println("invalid file, cant upload");
+                    return null;
                 }
-            }
+                break;
+            case "sendString":
+                //Muss extra behandelt werden, damit auch Zeilenumbrüche korrekt behandelt werden
+                //Zeichenkettenlänge wird mitgesendet
+                action += ";" + args[0].length();
+                break;
+            default:
+                if (args != null) {
+                    for (String arg : args) {
+                        action += ";" + arg;
+                    }
+                }
+                break;
         }
         action += '\n';
         return action;
+    }
+
+    private void sendString(String str, OutputStream os) throws IOException {
+        byte[] bytes = str.getBytes(StandardCharsets.UTF_8);
+
+        //abschicken
+        os.write(bytes);
     }
 
     private void uploadFile(OutputStream os) throws IOException {
