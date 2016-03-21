@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -21,6 +22,8 @@ public class ToolsFragment extends AbstractFragment {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
+    @Bind(R.id.tools_freq_btn)
+    Button toolsFreqBtn;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -32,9 +35,23 @@ public class ToolsFragment extends AbstractFragment {
         return root;
     }
 
-    @OnClick(R.id.batch_scan_btn)
-    public void onClick() {
-        startScan();
+    @OnClick({R.id.batch_scan_btn, R.id.tools_freq_btn})
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.batch_scan_btn:
+                startScan();
+                break;
+            case R.id.tools_freq_btn:
+                AbstractFragment frag = (AbstractFragment) mListener.getSupportFragmentManager().findFragmentByTag(FrequencyFragment.FRAGMENT_TAG);
+                if (frag == null) {
+                    frag = new FrequencyFragment();
+                }
+                mListener.getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.main_fragment_container, frag, FrequencyFragment.FRAGMENT_TAG)
+                        .addToBackStack(FrequencyFragment.FRAGMENT_TAG)
+                        .commit();
+                break;
+        }
     }
 
     private void startScan() {
@@ -63,4 +80,12 @@ public class ToolsFragment extends AbstractFragment {
             }
         }
     }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        ButterKnife.unbind(this);
+    }
+
+
 }

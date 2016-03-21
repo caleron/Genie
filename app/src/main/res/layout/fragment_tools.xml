@@ -11,4 +11,11 @@
         android:text="Batch-Scannen"
         android:id="@+id/batch_scan_btn"
         android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Frequenzen"
+        android:id="@+id/tools_freq_btn"
+        android:layout_gravity="center_horizontal" />
 </LinearLayout>
