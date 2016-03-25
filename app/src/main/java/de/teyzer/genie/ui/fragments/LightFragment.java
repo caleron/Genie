@@ -61,6 +61,9 @@ public class LightFragment extends AbstractFragment implements View.OnClickListe
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
+    //nötig, damit keine Events gesendet werden, während die Instanz wiederhergestellt wird
+    private boolean suppressEvents = true;
+
     public LightFragment() {
         // Required empty public constructor
     }
@@ -78,10 +81,8 @@ public class LightFragment extends AbstractFragment implements View.OnClickListe
         lightColorPicker.setShowOldCenterColor(false);
 
         lightColorPickerModeRadioButton.setChecked(true);
-        onClick(lightColorPickerModeRadioButton);
 
         lightRgbManuallySwitch.setChecked(false);
-        onClick(lightRgbManuallySwitch);
 
         lightColorPicker.setOnColorChangedListener(this);
         lightColorPicker.setOnColorSelectedListener(this);
@@ -143,6 +144,13 @@ public class LightFragment extends AbstractFragment implements View.OnClickListe
         super.onResume();
         revalidateColorMode(false);
         revalidateManuallyMode();
+        suppressEvents = false;
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        suppressEvents = true;
     }
 
     @OnClick(R.id.light_rgb_manually_switch)
@@ -150,7 +158,6 @@ public class LightFragment extends AbstractFragment implements View.OnClickListe
         revalidateManuallyMode();
         boolean musicMode = !lightRgbManuallySwitch.isChecked();
         mListener.getServerConnect().executeAction(Action.setColorMode(musicMode, null));
-
     }
 
     private void revalidateColorMode(boolean setColor) {
@@ -195,17 +202,24 @@ public class LightFragment extends AbstractFragment implements View.OnClickListe
     @Override
     public void onColorChanged(int color) {
         //System.out.println("changed color = [" + color + "]    " + lightColorPicker.getColor());
-        mListener.getServerConnect().executeAction(Action.setColor(color, null));
+        if (!suppressEvents) {
+            mListener.getServerConnect().executeAction(Action.setColor(color, null));
+        }
     }
 
     @Override
     public void onColorSelected(int color) {
         //System.out.println("selected color = [" + color + "]" + "    " + lightColorPicker.getColor());
-        mListener.getServerConnect().executeAction(Action.setColor(color, null));
+        if (!suppressEvents) {
+            mListener.getServerConnect().executeAction(Action.setColor(color, null));
+        }
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        if (suppressEvents)
+            return;
+
         switch (seekBar.getId()) {
             case R.id.light_white_seekbar:
                 mListener.getServerConnect().executeAction(Action.setWhiteBrightness(progress, null));
