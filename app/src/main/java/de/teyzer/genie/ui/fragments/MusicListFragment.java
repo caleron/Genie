@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import butterknife.Bind;
@@ -35,13 +36,13 @@ public class MusicListFragment extends AbstractFragment {
 
     private int displayMode;
 
-    ArrayList<Track> displayTracks;
-    ArrayList<Artist> displayArtists;
-    ArrayList<Album> displayAlbums;
+    private ArrayList<Track> displayTracks;
+    private ArrayList<Artist> displayArtists;
+    private ArrayList<Album> displayAlbums;
 
-    ArrayList<Track> allTracks;
-    ArrayList<Artist> allArtists;
-    ArrayList<Album> allAlbums;
+    private ArrayList<Track> allTracks;
+    private ArrayList<Artist> allArtists;
+    private ArrayList<Album> allAlbums;
 
     public void setTrackMode(MusicFragment parentFragment, ArrayList<Track> tracks) {
         this.parentFragment = parentFragment;
@@ -65,14 +66,20 @@ public class MusicListFragment extends AbstractFragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        //Einmalige Sachen müssen in onCreate gemacht werden, da onCreateView jedes Mal neu ausgeführt
+        //wird, nachdem das Fragment im Hintegrund war
+        musicAdapter = new MusicAdapter();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         ViewGroup root = (ViewGroup) inflater.inflate(R.layout.fragment_music_list, container, false);
         ButterKnife.bind(this, root);
 
         RecyclerView.LayoutManager mListLayoutManager = new LinearLayoutManager(getActivity());
         trackListView.setLayoutManager(mListLayoutManager);
-
-        musicAdapter = new MusicAdapter();
         trackListView.setAdapter(musicAdapter);
 
         return root;
@@ -181,6 +188,7 @@ public class MusicListFragment extends AbstractFragment {
      * Adapter zum Darstellen der Musiktitel in der Liste
      */
     private class MusicAdapter extends RecyclerView.Adapter<ViewHolder> {
+
         /**
          * Erstellt einen neuen MusicAdapter
          */

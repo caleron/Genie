@@ -11,6 +11,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -55,6 +56,18 @@ public class MusicFragment extends AbstractFragment implements UploadStatusListe
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        /**
+         * WICHTIG - getChildFragmentManager verwenden, sonst funktioniert der Lebenszyklus
+         * der Fragmente nicht richtig. Sie werden dann nicht neu angezeigt, nachdem das
+         * MusicFragment im Hintergrund war.
+         */
+        musicTabPagerAdapter = new MusicTabPagerAdapter(getChildFragmentManager());
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         setHasOptionsMenu(true);
         // Inflate the layout for this fragment
@@ -76,12 +89,6 @@ public class MusicFragment extends AbstractFragment implements UploadStatusListe
         tabLayout.addTab(tabLayout.newTab().setText("Alben"));
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        /**
-         * WICHTIG - getChildFragmentManager verwenden, sonst funktioniert der Lebenszyklus
-         * der Fragmente nicht richtig. Sie werden dann nicht neu angezeigt, nachdem das
-         * MusicFragment im Hintergrund war.
-         */
-        musicTabPagerAdapter = new MusicTabPagerAdapter(getChildFragmentManager());
         musicListPager.setAdapter(musicTabPagerAdapter);
         musicListPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
