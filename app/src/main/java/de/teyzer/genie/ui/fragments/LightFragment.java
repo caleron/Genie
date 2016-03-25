@@ -97,9 +97,51 @@ public class LightFragment extends AbstractFragment implements View.OnClickListe
     }
 
     @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            lightRgbManuallySwitch.setChecked(savedInstanceState.getBoolean("manually", false));
+
+            lightWhiteSeekbar.setProgress(savedInstanceState.getInt("white"));
+            if (lightRgbManuallySwitch.isChecked()) {
+                if (savedInstanceState.getBoolean("pickerMode")) {
+                    lightColorPicker.setColor(savedInstanceState.getInt("color"));
+                    lightColorPickerModeRadioButton.setChecked(true);
+                } else {
+                    lightColorRgbModeRadioBtn.setChecked(true);
+                    lightRedSeekbar.setProgress(savedInstanceState.getInt("red"));
+                    lightGreenSeekbar.setProgress(savedInstanceState.getInt("green"));
+                    lightBlueSeekbar.setProgress(savedInstanceState.getInt("blue"));
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (lightRgbManuallySwitch != null) {
+            outState.putBoolean("manually", lightRgbManuallySwitch.isChecked());
+            outState.putInt("white", lightWhiteSeekbar.getProgress());
+
+            if (lightRgbManuallySwitch.isChecked()) {
+                if (lightColorPickerModeRadioButton.isChecked()) {
+                    outState.putBoolean("pickerMode", true);
+                    outState.putInt("color", lightColorPicker.getColor());
+                } else {
+                    outState.putBoolean("pickerMode", false);
+                    outState.putInt("red", lightRedSeekbar.getProgress());
+                    outState.putInt("green", lightGreenSeekbar.getProgress());
+                    outState.putInt("blue", lightBlueSeekbar.getProgress());
+                }
+            }
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
-        revalidateColorMode();
+        revalidateColorMode(false);
         revalidateManuallyMode();
     }
 
@@ -111,24 +153,27 @@ public class LightFragment extends AbstractFragment implements View.OnClickListe
 
     }
 
-    private void revalidateColorMode() {
+    private void revalidateColorMode(boolean setColor) {
         if (lightColorPickerModeRadioButton.isChecked()) {
             //Colorpicker anzeigen
             lightRgbModeBox.setVisibility(View.GONE);
             lightColorPickerModeBox.setVisibility(View.VISIBLE);
 
-            lightColorPicker.setColor(Color.rgb(lightRedSeekbar.getProgress(),
-                    lightGreenSeekbar.getProgress(), lightBlueSeekbar.getProgress()));
-
+            if (setColor) {
+                lightColorPicker.setColor(Color.rgb(lightRedSeekbar.getProgress(),
+                        lightGreenSeekbar.getProgress(), lightBlueSeekbar.getProgress()));
+            }
         } else {
             //RGB-Schieber anzeigen
             lightRgbModeBox.setVisibility(View.VISIBLE);
             lightColorPickerModeBox.setVisibility(View.GONE);
 
-            int color = lightColorPicker.getColor();
-            lightRedSeekbar.setProgress(Color.red(color));
-            lightGreenSeekbar.setProgress(Color.green(color));
-            lightBlueSeekbar.setProgress(Color.blue(color));
+            if (setColor) {
+                int color = lightColorPicker.getColor();
+                lightRedSeekbar.setProgress(Color.red(color));
+                lightGreenSeekbar.setProgress(Color.green(color));
+                lightBlueSeekbar.setProgress(Color.blue(color));
+            }
         }
     }
 
@@ -144,7 +189,7 @@ public class LightFragment extends AbstractFragment implements View.OnClickListe
     @Override
     public void onCheckedChanged(RadioGroup group, int checkedId) {
         //wird ausgelöst, wenn der Farbmodus verändert wurde
-        revalidateColorMode();
+        revalidateColorMode(true);
     }
 
     @Override
