@@ -281,7 +281,6 @@ public class MainActivity extends AppCompatActivity
                 fragment = new LightFragment();
             }
             tag = LightFragment.FRAGMENT_TAG;
-
         }
 
         if (fragment != null) {
@@ -345,7 +344,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if (key == Prefs.PREF_HOST_ADRESS || key == Prefs.PREF_HOST_PORT) {
+        if (Prefs.PREF_HOST_ADRESS.equals(key) || Prefs.PREF_HOST_PORT.equals(key)) {
             serverConnect.disconnect();
             serverConnect.refreshPrefs();
         }

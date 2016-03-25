@@ -88,7 +88,7 @@ public class ServerConnect implements Prefs {
         connect();
         int waitCounter = 0;
 
-        while (waitCounter < 100) {
+        while (waitCounter < 100 && !requestThread.isInterrupted()) {
             if (socket == null)
                 return;
 
@@ -139,6 +139,8 @@ public class ServerConnect implements Prefs {
             if (socket != null) {
                 socket.close();
             }
+            requestThread.interrupt();
+            taskQueue.clear();
         } catch (IOException e) {
             e.printStackTrace();
         }
