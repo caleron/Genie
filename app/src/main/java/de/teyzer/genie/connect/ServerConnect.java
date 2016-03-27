@@ -125,11 +125,13 @@ public class ServerConnect implements Prefs {
             }
         }
 
-        try {
-            socket.close();
-            System.out.println("socket closed after timeout");
-        } catch (IOException e) {
-            e.printStackTrace();
+        if (socket != null) {
+            try {
+                socket.close();
+                System.out.println("socket closed after timeout");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -139,7 +141,9 @@ public class ServerConnect implements Prefs {
             if (socket != null) {
                 socket.close();
             }
-            requestThread.interrupt();
+            if (requestThread != null) {
+                requestThread.interrupt();
+            }
             taskQueue.clear();
         } catch (IOException e) {
             e.printStackTrace();
