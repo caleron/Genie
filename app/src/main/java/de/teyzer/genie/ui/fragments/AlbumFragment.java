@@ -17,6 +17,7 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.teyzer.genie.R;
 import de.teyzer.genie.connect.Action;
+import de.teyzer.genie.connect.UploadAndResponseListener;
 import de.teyzer.genie.model.Album;
 import de.teyzer.genie.model.Track;
 import de.teyzer.genie.ui.custom.PlayerBar;
@@ -33,7 +34,7 @@ public class AlbumFragment extends AbstractFragment {
 
     private MusicAdapter musicAdapter;
     private AlbumFragment albumFragment;
-    private MusicFragment musicFragment;
+    private UploadAndResponseListener listener;
 
     private Album displayAlbum;
     private ArrayList<Track> displayTracks;
@@ -64,8 +65,8 @@ public class AlbumFragment extends AbstractFragment {
         return root;
     }
 
-    public void setArguments(MusicFragment parentFragment, Album album) {
-        musicFragment = parentFragment;
+    public void setArguments(UploadAndResponseListener listener, Album album) {
+        this.listener = listener;
         displayAlbum = album;
         displayTracks = album.getTracks();
     }
@@ -148,7 +149,7 @@ public class AlbumFragment extends AbstractFragment {
             File f = new File(track.getPath());
             Uri uri = Uri.fromFile(f);
             System.out.println(uri);
-            mListener.getServerConnect().executeAction(Action.playFile(uri, playerBar, musicFragment));
+            mListener.getServerConnect().executeAction(Action.playFile(uri, playerBar, listener));
         }
     }
 }

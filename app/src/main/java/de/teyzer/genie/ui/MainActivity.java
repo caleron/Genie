@@ -324,13 +324,13 @@ public class MainActivity extends AppCompatActivity
      * @param progressPercent Prozentualer Forschritt, über 100 wenn fertiggestellt.
      */
     @Override
-    public void updateStatus(final String text, final int progressPercent) {
+    public void updateUploadStatus(final String text, final int progressPercent) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 MusicFragment musicFragment = MusicFragment.getInstance();
                 if (musicFragment != null) {
-                    musicFragment.updateStatus(text, progressPercent);
+                    musicFragment.updateUploadStatus(text, progressPercent);
                 }
             }
         });

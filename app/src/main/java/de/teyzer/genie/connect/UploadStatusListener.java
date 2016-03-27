@@ -7,5 +7,5 @@ public interface UploadStatusListener {
      * @param text            Statustext
      * @param progressPercent Prozentualer Forschritt, über 100 wenn fertiggestellt.
      */
-    void updateStatus(String text, int progressPercent);
+    void updateUploadStatus(String text, int progressPercent);
 }

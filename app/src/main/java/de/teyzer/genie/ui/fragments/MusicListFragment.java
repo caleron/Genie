@@ -12,13 +12,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.io.File;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.teyzer.genie.R;
 import de.teyzer.genie.connect.Action;
+import de.teyzer.genie.connect.UploadAndResponseListener;
 import de.teyzer.genie.model.Album;
 import de.teyzer.genie.model.Artist;
 import de.teyzer.genie.model.Track;
@@ -32,7 +32,7 @@ public class MusicListFragment extends AbstractFragment {
     RecyclerView trackListView;
 
     private MusicAdapter musicAdapter;
-    private MusicFragment parentFragment;
+    private UploadAndResponseListener listener;
 
     private int displayMode;
 
@@ -44,22 +44,22 @@ public class MusicListFragment extends AbstractFragment {
     private ArrayList<Artist> allArtists;
     private ArrayList<Album> allAlbums;
 
-    public void setTrackMode(MusicFragment parentFragment, ArrayList<Track> tracks) {
-        this.parentFragment = parentFragment;
+    public void setTrackMode(UploadAndResponseListener parentFragment, ArrayList<Track> tracks) {
+        this.listener = parentFragment;
         this.displayMode = MODE_TITLE;
         allTracks = tracks;
         displayTracks = tracks;
     }
 
-    public void setAlbumMode(MusicFragment parentFragment, ArrayList<Album> albums) {
-        this.parentFragment = parentFragment;
+    public void setAlbumMode(UploadAndResponseListener parentFragment, ArrayList<Album> albums) {
+        this.listener = parentFragment;
         this.displayMode = MODE_ALBUM;
         allAlbums = albums;
         displayAlbums = albums;
     }
 
-    public void setArtistMode(MusicFragment parentFragment, ArrayList<Artist> artists) {
-        this.parentFragment = parentFragment;
+    public void setArtistMode(UploadAndResponseListener parentFragment, ArrayList<Artist> artists) {
+        this.listener = parentFragment;
         this.displayMode = MODE_ARTIST;
         allArtists = artists;
         displayArtists = artists;
@@ -289,7 +289,7 @@ public class MusicListFragment extends AbstractFragment {
                     File f = new File(track.getPath());
                     Uri uri = Uri.fromFile(f);
                     System.out.println(uri);
-                    mListener.getServerConnect().executeAction(Action.playFile(uri, parentFragment, parentFragment));
+                    mListener.getServerConnect().executeAction(Action.playFile(uri, listener, listener));
                     break;
                 case MODE_ALBUM:
                     //Album anzeigen
@@ -298,7 +298,7 @@ public class MusicListFragment extends AbstractFragment {
                     if (fragment == null) {
                         fragment = new AlbumFragment();
                     }
-                    fragment.setArguments(parentFragment, album);
+                    fragment.setArguments(listener, album);
 
                     fragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.frag_enter, R.anim.frag_exit, R.anim.frag_pop_enter, R.anim.frag_pop_exit)
@@ -313,7 +313,7 @@ public class MusicListFragment extends AbstractFragment {
                     if (artistFragment == null) {
                         artistFragment = new ArtistFragment();
                     }
-                    artistFragment.setArguments(parentFragment, artist);
+                    artistFragment.setArguments(listener, artist);
 
                     fragmentManager.beginTransaction()
                             .setCustomAnimations(R.anim.frag_enter, R.anim.frag_exit, R.anim.frag_pop_enter, R.anim.frag_pop_exit)

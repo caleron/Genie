@@ -213,13 +213,13 @@ public class Action {
 
                 String status = String.format("%s hochgeladen (%s/%s)", statusPercent + "%", totalUploadedBytes, fileLength);
 
-                uploadStatusListener.updateStatus(status, statusPercent);
+                uploadStatusListener.updateUploadStatus(status, statusPercent);
                 iterationCount = 0;
             }
         }
         fis.close();
         if (uploadStatusListener != null) {
-            uploadStatusListener.updateStatus("finished", 101);
+            uploadStatusListener.updateUploadStatus("finished", 101);
         }
         System.out.println("bytes sent: " + totalUploadedBytes);
     }

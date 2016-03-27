@@ -19,10 +19,12 @@ import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.teyzer.genie.R;
+import de.teyzer.genie.connect.Action;
+import de.teyzer.genie.connect.UploadAndResponseListener;
 import de.teyzer.genie.model.Artist;
 import de.teyzer.genie.ui.custom.PlayerBar;
 
-public class ArtistFragment extends AbstractFragment {
+public class ArtistFragment extends AbstractFragment implements UploadAndResponseListener {
     public static final String FRAGMENT_TAG = "artist_fragment";
 
     @Bind(R.id.toolbar)
@@ -38,7 +40,7 @@ public class ArtistFragment extends AbstractFragment {
 
     private MusicTabPagerAdapter musicTabPagerAdapter;
     Artist displayArtist;
-    private MusicFragment musicFragment;
+    private UploadAndResponseListener listener;
     private MenuItem searchItem;
 
     public ArtistFragment() {
@@ -113,9 +115,21 @@ public class ArtistFragment extends AbstractFragment {
         searchView.setOnQueryTextListener(searchListener);
     }
 
-    public void setArguments(MusicFragment parentFragment, Artist artist) {
-        musicFragment = parentFragment;
+    public void setArguments(UploadAndResponseListener listener, Artist artist) {
+        this.listener = listener;
         displayArtist = artist;
+    }
+
+    @Override
+    public void responseReceived(Action sourceAction, String response) {
+        if (playerBar != null) {
+            playerBar.responseReceived(sourceAction, response);
+        }
+    }
+
+    @Override
+    public void updateUploadStatus(String text, int progressPercent) {
+        listener.updateUploadStatus(text, progressPercent);
     }
 
     /**
@@ -129,10 +143,10 @@ public class ArtistFragment extends AbstractFragment {
         public MusicTabPagerAdapter(FragmentManager fm) {
             super(fm);
             titleListFrag = new MusicListFragment();
-            titleListFrag.setTrackMode(musicFragment, displayArtist.getAllTracks());
+            titleListFrag.setTrackMode(artistFragment, displayArtist.getAllTracks());
 
             albumListFrag = new MusicListFragment();
-            albumListFrag.setAlbumMode(musicFragment, displayArtist.getAlbums());
+            albumListFrag.setAlbumMode(artistFragment, displayArtist.getAlbums());
         }
 
         @Override

@@ -11,7 +11,6 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -23,13 +22,12 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.teyzer.genie.R;
 import de.teyzer.genie.connect.Action;
-import de.teyzer.genie.connect.ResponseListener;
-import de.teyzer.genie.connect.UploadStatusListener;
+import de.teyzer.genie.connect.UploadAndResponseListener;
 import de.teyzer.genie.ui.custom.PlayerBar;
 import de.teyzer.genie.ui.dialogs.UploadStatusDialogFragment;
 
 
-public class MusicFragment extends AbstractFragment implements UploadStatusListener, ResponseListener {
+public class MusicFragment extends AbstractFragment implements UploadAndResponseListener {
     public static final String FRAGMENT_TAG = "music_control";
     public static final int REQUEST_SHOW_PROGRESS = 0;
 
@@ -162,7 +160,7 @@ public class MusicFragment extends AbstractFragment implements UploadStatusListe
      * @param progressPercent Prozentualer Forschritt, über 100 wenn fertiggestellt.
      */
     @Override
-    public void updateStatus(String text, int progressPercent) {
+    public void updateUploadStatus(String text, int progressPercent) {
         if (uploadStatusDialogFragment == null) {
             uploadStatusDialogFragment = new UploadStatusDialogFragment();
             uploadStatusDialogFragment.setTargetFragment(musicFragment, REQUEST_SHOW_PROGRESS);
@@ -187,7 +185,9 @@ public class MusicFragment extends AbstractFragment implements UploadStatusListe
      */
     @Override
     public void responseReceived(Action sourceAction, String response) {
-        playerBar.responseReceived(sourceAction, response);
+        if (playerBar != null) {
+            playerBar.responseReceived(sourceAction, response);
+        }
     }
 
 
