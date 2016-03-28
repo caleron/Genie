@@ -96,32 +96,37 @@ public class ServerConnect implements Prefs {
                 waitCounter++;
                 try {
                     Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                } catch (InterruptedException ignored) {
+                    break;
                 }
                 continue;
             }
 
             waitCounter = 0;
+            Action action = null;
             //Aktion aus der Queue nehmen
-            Action action = taskQueue.poll();
+            if (!taskQueue.isEmpty()) {
+                action = taskQueue.poll();
+            }
 
-            try {
-                action.execute(socket);
-                System.out.println("action executed");
-            } catch (SocketException e) {
-                //Verbindung trennen, neu aufbauen und ein zweites Mal die Aktion ausführen
+            if (action != null) {
                 try {
-                    socket.close();
-                    System.out.println("action failed, reconnect to server and retry");
-                    connect();
                     action.execute(socket);
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                    break;
+                    System.out.println("action executed");
+                } catch (SocketException e) {
+                    //Verbindung trennen, neu aufbauen und ein zweites Mal die Aktion ausführen
+                    try {
+                        socket.close();
+                        System.out.println("action failed, reconnect to server and retry");
+                        connect();
+                        action.execute(socket);
+                    } catch (IOException e1) {
+                        e1.printStackTrace();
+                        break;
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
 

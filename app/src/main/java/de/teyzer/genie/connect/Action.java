@@ -131,7 +131,7 @@ public class Action {
 
         String response = in.readLine();
 
-        if (command.equals("playFile") && response.equals("file not found")) {
+        if (command.equals("playFile") && response != null && response.equals("file not found")) {
             new Action(fileUri, "uploadAndPlayFile", listener, uploadStatusListener).execute(socket);
         } else if (listener != null) {
             listener.responseReceived(this, response);
