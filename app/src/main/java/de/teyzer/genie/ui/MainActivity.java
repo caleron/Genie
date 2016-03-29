@@ -39,7 +39,6 @@ import de.teyzer.genie.ui.fragments.ToolsFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DataProvider, UploadStatusListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    private static MainActivity mainActivity;
     private DataManager dataManager;
     private ServerConnect serverConnect;
     private int startFragmentMenuItemId = R.id.nav_light_remote;
@@ -53,7 +52,6 @@ public class MainActivity extends AppCompatActivity
     private ServerStatus serverStatus;
 
     public MainActivity() {
-        mainActivity = this;
     }
 
     protected void onCreate(Bundle savedInstanceState) {

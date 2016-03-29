@@ -103,7 +103,7 @@ public class NewProductActivity extends AppCompatActivity {
             foodTypeNames[i] = foodTypes[i].getName();
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, foodTypeNames);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, foodTypeNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         foodTypeSpinner.setAdapter(adapter);
@@ -148,7 +148,7 @@ public class NewProductActivity extends AppCompatActivity {
         Double packSize = 1.0;
         try {
             packSize = Double.parseDouble(quantityBox.getText().toString());
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
 
         }
 
