@@ -3,7 +3,7 @@ package de.teyzer.genie.model;
 /**
  * Gibt an, wann ein Nahrungsmitteltyp bevorzugt gegessen wird
  */
-public final class PreferredMeal {
+final class PreferredMeal {
     public static final String BREAKFAST = "breakfast";
     public static final String LUNCH = "lunch";
     public static final String DINNER = "dinner";

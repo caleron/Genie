@@ -9,7 +9,7 @@ import de.teyzer.genie.data.DataProvider;
 
 public class AbstractFragment extends Fragment {
 
-    protected DataProvider mListener;
+    DataProvider mListener;
 
     @Override
     public void onAttach(Context context) {

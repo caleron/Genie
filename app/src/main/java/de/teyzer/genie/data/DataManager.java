@@ -24,11 +24,11 @@ public class DataManager {
     private SparseArray<FoodType> foodTypes;
     private SparseArray<Product> products;
 
-    private ArrayList<Track> tracks;
-    private ArrayList<Artist> artists;
-    private ArrayList<Album> albums;
+    private final ArrayList<Track> tracks;
+    private final ArrayList<Artist> artists;
+    private final ArrayList<Album> albums;
 
-    private DbHelper dbHelper;
+    private final DbHelper dbHelper;
 
     public DataManager(Context context) {
         dbHelper = new DbHelper(context);

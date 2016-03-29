@@ -16,8 +16,7 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.teyzer.genie.R;
-import de.teyzer.genie.connect.Action;
-import de.teyzer.genie.connect.UploadAndResponseListener;
+import de.teyzer.genie.connect.UploadStatusListener;
 import de.teyzer.genie.model.Album;
 import de.teyzer.genie.model.Track;
 import de.teyzer.genie.ui.custom.PlayerBar;
@@ -26,21 +25,18 @@ public class AlbumFragment extends AbstractFragment {
     public static final String FRAGMENT_TAG = "album_fragment";
 
     @Bind(R.id.toolbar)
-    Toolbar toolbar;
+    private Toolbar toolbar;
     @Bind(R.id.album_track_list)
-    RecyclerView trackListView;
+    private RecyclerView trackListView;
     @Bind(R.id.album_player_bar)
-    PlayerBar playerBar;
+    private PlayerBar playerBar;
 
-    private MusicAdapter musicAdapter;
-    private AlbumFragment albumFragment;
-    private UploadAndResponseListener listener;
+    private UploadStatusListener listener;
 
     private Album displayAlbum;
     private ArrayList<Track> displayTracks;
 
     public AlbumFragment() {
-        albumFragment = this;
     }
 
     @Override
@@ -59,13 +55,12 @@ public class AlbumFragment extends AbstractFragment {
         RecyclerView.LayoutManager mListLayoutManager = new LinearLayoutManager(getActivity());
         trackListView.setLayoutManager(mListLayoutManager);
 
-        musicAdapter = new MusicAdapter();
-        trackListView.setAdapter(musicAdapter);
+        trackListView.setAdapter(new MusicAdapter());
 
         return root;
     }
 
-    public void setArguments(UploadAndResponseListener listener, Album album) {
+    public void setArguments(UploadStatusListener listener, Album album) {
         this.listener = listener;
         displayAlbum = album;
         displayTracks = album.getTracks();
@@ -120,8 +115,8 @@ public class AlbumFragment extends AbstractFragment {
      */
     private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         View itemView;
-        TextView titleView;
-        TextView subTitleView;
+        final TextView titleView;
+        final TextView subTitleView;
 
         Track track;
 
@@ -149,7 +144,7 @@ public class AlbumFragment extends AbstractFragment {
             File f = new File(track.getPath());
             Uri uri = Uri.fromFile(f);
             System.out.println(uri);
-            mListener.getServerConnect().executeAction(Action.playFile(uri, playerBar, listener));
+            mListener.getServerStatus().playFile(uri, listener);
         }
     }
 }

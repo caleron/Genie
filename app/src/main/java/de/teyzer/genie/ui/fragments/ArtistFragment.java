@@ -19,33 +19,28 @@ import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.teyzer.genie.R;
-import de.teyzer.genie.connect.Action;
-import de.teyzer.genie.connect.UploadAndResponseListener;
+import de.teyzer.genie.connect.UploadStatusListener;
 import de.teyzer.genie.model.Artist;
 import de.teyzer.genie.ui.custom.PlayerBar;
 
-public class ArtistFragment extends AbstractFragment implements UploadAndResponseListener {
+public class ArtistFragment extends AbstractFragment {
     public static final String FRAGMENT_TAG = "artist_fragment";
 
     @Bind(R.id.toolbar)
-    Toolbar toolbar;
+    private Toolbar toolbar;
     @Bind(R.id.music_player_bar)
-    PlayerBar playerBar;
+    private PlayerBar playerBar;
     @Bind(R.id.music_list_pager)
-    ViewPager viewPager;
+    private ViewPager viewPager;
     @Bind(R.id.tab_layout)
-    TabLayout tabLayout;
-
-    ArtistFragment artistFragment;
+    private TabLayout tabLayout;
 
     private MusicTabPagerAdapter musicTabPagerAdapter;
-    Artist displayArtist;
-    private UploadAndResponseListener listener;
+    private Artist displayArtist;
+    private UploadStatusListener listener;
     private MenuItem searchItem;
 
-    public ArtistFragment() {
-        artistFragment = this;
-    }
+    public ArtistFragment() {}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -102,6 +97,12 @@ public class ArtistFragment extends AbstractFragment implements UploadAndRespons
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        playerBar.requestStatusRefresh();
+    }
+
+    @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_menu, menu);
 
@@ -115,21 +116,9 @@ public class ArtistFragment extends AbstractFragment implements UploadAndRespons
         searchView.setOnQueryTextListener(searchListener);
     }
 
-    public void setArguments(UploadAndResponseListener listener, Artist artist) {
+    public void setArguments(UploadStatusListener listener, Artist artist) {
         this.listener = listener;
         displayArtist = artist;
-    }
-
-    @Override
-    public void responseReceived(Action sourceAction, String response) {
-        if (playerBar != null) {
-            playerBar.responseReceived(sourceAction, response);
-        }
-    }
-
-    @Override
-    public void updateUploadStatus(String text, int progressPercent) {
-        listener.updateUploadStatus(text, progressPercent);
     }
 
     /**
@@ -137,16 +126,16 @@ public class ArtistFragment extends AbstractFragment implements UploadAndRespons
      */
     public class MusicTabPagerAdapter extends FragmentStatePagerAdapter {
 
-        MusicListFragment titleListFrag;
-        MusicListFragment albumListFrag;
+        final MusicListFragment titleListFrag;
+        final MusicListFragment albumListFrag;
 
         public MusicTabPagerAdapter(FragmentManager fm) {
             super(fm);
             titleListFrag = new MusicListFragment();
-            titleListFrag.setTrackMode(artistFragment, displayArtist.getAllTracks());
+            titleListFrag.setTrackMode(listener, displayArtist.getAllTracks());
 
             albumListFrag = new MusicListFragment();
-            albumListFrag.setAlbumMode(artistFragment, displayArtist.getAlbums());
+            albumListFrag.setAlbumMode(listener, displayArtist.getAlbums());
         }
 
         @Override
@@ -180,7 +169,7 @@ public class ArtistFragment extends AbstractFragment implements UploadAndRespons
     /**
      * Reagiert auf Events vom Suchfeld. Für die Suche werden playerBar und tabLayout versteckt.
      */
-    public class SearchListener implements MenuItemCompat.OnActionExpandListener, SearchView.OnQueryTextListener {
+    private class SearchListener implements MenuItemCompat.OnActionExpandListener, SearchView.OnQueryTextListener {
 
         @Override
         public boolean onMenuItemActionExpand(MenuItem item) {

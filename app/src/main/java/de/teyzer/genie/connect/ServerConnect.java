@@ -19,13 +19,13 @@ public class ServerConnect implements Prefs {
     private static int hostPort = 4732;
     private static String hostIp = "192.168.1.2";
 
-    private Queue<Action> taskQueue = new LinkedList<>();
+    private final Queue<Action> taskQueue = new LinkedList<>();
 
     private Socket socket;
 
     private Thread requestThread;
 
-    private Activity activity;
+    private final Activity activity;
 
     public ServerConnect(Activity activity) {
         this.activity = activity;

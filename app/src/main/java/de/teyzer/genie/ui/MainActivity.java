@@ -24,6 +24,7 @@ import butterknife.ButterKnife;
 import de.teyzer.genie.R;
 import de.teyzer.genie.connect.Action;
 import de.teyzer.genie.connect.ServerConnect;
+import de.teyzer.genie.connect.ServerStatus;
 import de.teyzer.genie.connect.UploadStatusListener;
 import de.teyzer.genie.data.DataManager;
 import de.teyzer.genie.data.DataProvider;
@@ -38,17 +39,18 @@ import de.teyzer.genie.ui.fragments.ToolsFragment;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, DataProvider, UploadStatusListener, SharedPreferences.OnSharedPreferenceChangeListener {
 
-    public static MainActivity mainActivity;
-    DataManager dataManager;
-    ServerConnect serverConnect;
-    int startFragmentMenuItemId = R.id.nav_light_remote;
+    private static MainActivity mainActivity;
+    private DataManager dataManager;
+    private ServerConnect serverConnect;
+    private int startFragmentMenuItemId = R.id.nav_light_remote;
 
     @Bind(R.id.nav_view)
-    NavigationView navView;
+    private NavigationView navView;
     @Bind(R.id.drawer_layout)
-    DrawerLayout drawerLayout;
+    private DrawerLayout drawerLayout;
 
-    ActionBarDrawerToggle lastActionBarDrawerToggle = null;
+    private ActionBarDrawerToggle lastActionBarDrawerToggle = null;
+    private ServerStatus serverStatus;
 
     public MainActivity() {
         mainActivity = this;
@@ -130,6 +132,8 @@ public class MainActivity extends AppCompatActivity
         MediaScanner.checkAndScanSongs(this, dataManager);
 
         serverConnect = new ServerConnect(this);
+
+        serverStatus = new ServerStatus(serverConnect);
     }
 
     /**
@@ -307,14 +311,9 @@ public class MainActivity extends AppCompatActivity
         return dataManager;
     }
 
-    /**
-     * Gibt die Serververbindung zurück
-     *
-     * @return Die Serververbindung
-     */
     @Override
-    public ServerConnect getServerConnect() {
-        return serverConnect;
+    public ServerStatus getServerStatus() {
+        return serverStatus;
     }
 
     /**

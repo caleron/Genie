@@ -21,26 +21,25 @@ import android.view.ViewGroup;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.teyzer.genie.R;
-import de.teyzer.genie.connect.Action;
-import de.teyzer.genie.connect.UploadAndResponseListener;
+import de.teyzer.genie.connect.UploadStatusListener;
 import de.teyzer.genie.ui.custom.PlayerBar;
 import de.teyzer.genie.ui.dialogs.UploadStatusDialogFragment;
 
 
-public class MusicFragment extends AbstractFragment implements UploadAndResponseListener {
+public class MusicFragment extends AbstractFragment implements UploadStatusListener {
     public static final String FRAGMENT_TAG = "music_control";
-    public static final int REQUEST_SHOW_PROGRESS = 0;
+    private static final int REQUEST_SHOW_PROGRESS = 0;
 
     private static MusicFragment musicFragment;
 
     @Bind(R.id.music_list_pager)
-    ViewPager musicListPager;
+    private ViewPager musicListPager;
     @Bind(R.id.toolbar)
-    Toolbar toolbar;
+    private Toolbar toolbar;
     @Bind(R.id.tab_layout)
-    TabLayout tabLayout;
+    private TabLayout tabLayout;
     @Bind(R.id.music_player_bar)
-    PlayerBar playerBar;
+    private PlayerBar playerBar;
 
     private UploadStatusDialogFragment uploadStatusDialogFragment = null;
     private MusicTabPagerAdapter musicTabPagerAdapter;
@@ -108,7 +107,7 @@ public class MusicFragment extends AbstractFragment implements UploadAndResponse
         });
     }
 
-    public MusicListFragment getCurrentTabFragment() {
+    private MusicListFragment getCurrentTabFragment() {
         return (MusicListFragment) musicTabPagerAdapter.getItem(tabLayout.getSelectedTabPosition());
     }
 
@@ -133,8 +132,8 @@ public class MusicFragment extends AbstractFragment implements UploadAndResponse
     @Override
     public void onResume() {
         super.onResume();
-        //Playerstate neu abfragen TODO testen obs ohne funktioniert wg PlayerBar.onAttachedToWindow
-        //playerBar.requestStatusRefresh();
+        //Playerstate neu abfragen
+        playerBar.requestStatusRefresh();
     }
 
     @Override
@@ -178,27 +177,13 @@ public class MusicFragment extends AbstractFragment implements UploadAndResponse
     }
 
     /**
-     * Wird ausgelöst, wenn eine Status-Antwort vom Server gekommen ist
-     *
-     * @param sourceAction Die Ursprungsaktion
-     * @param response     Die Antwort
-     */
-    @Override
-    public void responseReceived(Action sourceAction, String response) {
-        if (playerBar != null) {
-            playerBar.responseReceived(sourceAction, response);
-        }
-    }
-
-
-    /**
      * Wählt Passend zum Tabindex das richtige Tabfragment aus
      */
     public class MusicTabPagerAdapter extends FragmentStatePagerAdapter {
 
-        MusicListFragment titleListFrag;
-        MusicListFragment artistListFrag;
-        MusicListFragment albumListFrag;
+        final MusicListFragment titleListFrag;
+        final MusicListFragment artistListFrag;
+        final MusicListFragment albumListFrag;
 
         public MusicTabPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -247,7 +232,7 @@ public class MusicFragment extends AbstractFragment implements UploadAndResponse
     /**
      * Reagiert auf Events vom Suchfeld. Für die Suche werden playerBar und tabLayout versteckt.
      */
-    public class SearchListener implements MenuItemCompat.OnActionExpandListener, SearchView.OnQueryTextListener {
+    private class SearchListener implements MenuItemCompat.OnActionExpandListener, SearchView.OnQueryTextListener {
 
         @Override
         public boolean onMenuItemActionExpand(MenuItem item) {

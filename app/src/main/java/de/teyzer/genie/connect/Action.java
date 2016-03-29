@@ -18,21 +18,21 @@ public class Action {
     private Uri fileUri;
     private long fileLength = 0;
 
-    private String command;
+    private final String command;
     private String[] args;
 
-    private ResponseListener listener;
+    private final ResponseListener listener;
     private UploadStatusListener uploadStatusListener;
 
 
-    public Action(Uri fileUri, String command, ResponseListener listener, UploadStatusListener uploadStatusListener) {
+    private Action(Uri fileUri, String command, ResponseListener listener, UploadStatusListener uploadStatusListener) {
         this.fileUri = fileUri;
         this.command = command;
         this.listener = listener;
         this.uploadStatusListener = uploadStatusListener;
     }
 
-    public Action(String command, String[] args, ResponseListener listener) {
+    private Action(String command, String[] args, ResponseListener listener) {
         this.command = command;
         this.args = args;
         this.listener = listener;
@@ -55,7 +55,7 @@ public class Action {
     }
 
     public static Action playFiles(ArrayList<Uri> uris, ResponseListener listener, UploadStatusListener uploadStatusListener) {
-        return new Action("", null, listener);
+        return new Action("", null, listener);//TODO mach das
     }
 
     public static Action setShuffle(boolean shuffle, ResponseListener listener) {
@@ -84,12 +84,23 @@ public class Action {
         return new Action("setColor", new String[]{String.valueOf(color)}, listener);
     }
 
-    public static Action setColorMode(boolean musicMode, ResponseListener listener) {
-        return new Action("setColorMode", new String[]{musicMode ? "music" : "custom"}, listener);
+    /**
+     * Setzt den Farbmodus. Mögliche Werte: music, custom, colorCircle
+     *
+     * @param musicMode Der Farbmodus
+     * @param listener  Der Listener für die Antwort vom Server
+     * @return Action
+     */
+    public static Action setColorMode(String musicMode, ResponseListener listener) {
+        return new Action("setColorMode", new String[]{musicMode}, listener);
     }
 
     public static Action setWhiteBrightness(int brightness, ResponseListener listener) {
         return new Action("setWhiteBrightness", new String[]{String.valueOf(brightness)}, listener);
+    }
+
+    public static Action setColorBrightness(int brightness, ResponseListener listener) {
+        return new Action("setColorBrightness", new String[]{String.valueOf(brightness)}, listener);
     }
 
     public static Action changeVisualisation(ResponseListener listener) {

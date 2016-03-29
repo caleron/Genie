@@ -1,12 +1,12 @@
 package de.teyzer.genie.model;
 
 public class Track {
-    private int id;
+    private final int id;
 
-    private String title;
-    private String artist;
-    private String album;
-    private String path;
+    private final String title;
+    private final String artist;
+    private final String album;
+    private final String path;
 
     public Track(int id, String title, String artist, String album, String path) {
         this.id = id;

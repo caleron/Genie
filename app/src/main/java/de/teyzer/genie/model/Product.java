@@ -6,7 +6,7 @@ import java.io.Serializable;
  * Stellt ein konkretes Produkt dar, etwa eine 12er Packung Eier von Penny
  */
 public class Product implements Serializable {
-    private int id;
+    private final int id;
     private String name;
     private String store;
     private FoodType foodType;

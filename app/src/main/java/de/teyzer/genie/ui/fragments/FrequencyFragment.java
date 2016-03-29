@@ -24,11 +24,11 @@ public class FrequencyFragment extends AbstractFragment {
     public static final String FRAGMENT_TAG = "frequency_fragment";
 
     @Bind(R.id.toolbar)
-    Toolbar toolbar;
+    private Toolbar toolbar;
     @Bind(R.id.frequency_spectrogram)
-    SpectrogramView spectrogramView;
+    private SpectrogramView spectrogramView;
 
-    FFTTask fftTask;
+    private FFTTask fftTask;
 
     @Nullable
     @Override
@@ -56,9 +56,9 @@ public class FrequencyFragment extends AbstractFragment {
 
     private class FFTTask extends Thread {
 
-        int audioSource = MediaRecorder.AudioSource.MIC;
-        int channelConfig = AudioFormat.CHANNEL_IN_MONO;
-        int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
+        final int audioSource = MediaRecorder.AudioSource.MIC;
+        final int channelConfig = AudioFormat.CHANNEL_IN_MONO;
+        final int audioEncoding = AudioFormat.ENCODING_PCM_16BIT;
 
         final int BLOCK_SIZE = 2048;
         final int SAMPLE_RATE = 44100;
@@ -136,7 +136,7 @@ public class FrequencyFragment extends AbstractFragment {
      * http://www.ee.columbia.edu/~ronw/code/MEAPsoft/doc/html/FFT_8java-source.html
      */
     private class FFT {
-        int n, m;
+        final int n, m;
 
         // Lookup tables.  Only need to recompute when size of FFT changes.
         double[] cos;
@@ -163,12 +163,12 @@ public class FrequencyFragment extends AbstractFragment {
         /***************************************************************
          * fft.c Douglas L. Jones University of Illinois at Urbana-Champaign January 19, 1992
          * http://cnx.rice.edu/content/m12016/latest/
-         * <p>
+         * <p/>
          * fft: in-place radix-2 DIT DFT of a complex input
-         * <p>
+         * <p/>
          * input: n: length of FFT: must be a power of two m: n = 2**m input/output x: double array of length n with real
          * part of data y: double array of length n with imag part of data
-         * <p>
+         * <p/>
          * Permission to copy and use this program is granted as long as this header is included.
          ****************************************************************/
         public void fft(double[] x, double[] y) {

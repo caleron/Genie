@@ -14,31 +14,28 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.teyzer.genie.R;
-import de.teyzer.genie.connect.Action;
-import de.teyzer.genie.connect.ResponseListener;
-import de.teyzer.genie.connect.ServerConnect;
+import de.teyzer.genie.connect.ServerStatus;
+import de.teyzer.genie.connect.StatusChangedListener;
 import de.teyzer.genie.data.DataProvider;
-import de.teyzer.genie.model.PlayerState;
 
-public class PlayerBar extends RelativeLayout implements ResponseListener {
+public class PlayerBar extends RelativeLayout implements StatusChangedListener {
 
     @Bind(R.id.music_shuffle_btn)
-    ImageButton musicShuffleBtn;
+    private ImageButton musicShuffleBtn;
     @Bind(R.id.music_play_pause_btn)
-    ImageButton musicPlayPauseBtn;
+    private ImageButton musicPlayPauseBtn;
     @Bind(R.id.music_repeat_btn)
-    ImageButton musicRepeatBtn;
+    private ImageButton musicRepeatBtn;
     @Bind(R.id.music_current_title_text)
-    TextView musicCurrentTitleText;
+    private TextView musicCurrentTitleText;
     @Bind(R.id.music_current_artist_text)
-    TextView musicCurrentArtistText;
+    private TextView musicCurrentArtistText;
     @Bind(R.id.music_current_progress_bar)
-    SeekBar musicCurrentSeekBar;
+    private SeekBar musicCurrentSeekBar;
 
-    private PlayerState playerState;
     //null, falls nicht mehr aktiv
     private PlayProgressTimer playProgressTimer;
-    private DataProvider dataProvider;
+    private ServerStatus serverStatus;
 
     public PlayerBar(Context context) {
         super(context);
@@ -60,36 +57,28 @@ public class PlayerBar extends RelativeLayout implements ResponseListener {
         inflater.inflate(R.layout.bar_player, this, true);
 
         ButterKnife.bind(this);
-
-        playerState = new PlayerState(true, PlayerState.REPEAT_MODE_ALL);
     }
 
     public void setDataProvider(DataProvider dataProvider) {
-        this.dataProvider = dataProvider;
+        this.serverStatus = dataProvider.getServerStatus();
+        serverStatus.addStatusChangedListener(this);
     }
 
     /**
      * Fordert einen neuen Serverstatus an
      */
     public void requestStatusRefresh() {
-        if (dataProvider != null) {
-            ServerConnect serverConnect = dataProvider.getServerConnect();
-            serverConnect.executeAction(Action.getStatus(this));
+        if (serverStatus != null) {
+            serverStatus.requestNewStatus();
         }
     }
 
-    /**
-     * Wird ausgelöst, wenn eine Status-Antwort vom Server gekommen ist
-     *
-     * @param sourceAction Die Ursprungsaktion
-     * @param response     Die Antwort
-     */
     @Override
-    public void responseReceived(Action sourceAction, final String response) {
+    public void serverStatusChanged(final boolean newSong) {
         post(new Runnable() {
             @Override
             public void run() {
-                if (playerState.parsePlayerState(response)) {
+                if (newSong) {
                     if (playProgressTimer != null) {
                         playProgressTimer.cancel();
                     }
@@ -113,6 +102,7 @@ public class PlayerBar extends RelativeLayout implements ResponseListener {
         requestStatusRefresh();
     }
 
+
     public void destroyTimer() {
         //Timer zurücksetzen
         if (playProgressTimer != null) {
@@ -130,39 +120,33 @@ public class PlayerBar extends RelativeLayout implements ResponseListener {
     @OnClick({R.id.music_shuffle_btn, R.id.music_previous_btn, R.id.music_play_pause_btn, R.id.music_next_btn,
             R.id.music_repeat_btn})
     public void onClick(View view) {
-        ServerConnect serverConnect = dataProvider.getServerConnect();
+
         switch (view.getId()) {
             case R.id.music_shuffle_btn:
-                playerState.toggleShuffle();
+                serverStatus.toggleShuffle();
                 refreshShuffleBtnState();
-
-                serverConnect.executeAction(Action.setShuffle(playerState.isShuffle(), this));
                 break;
 
             case R.id.music_previous_btn:
-                serverConnect.executeAction(Action.playPrevious(this));
+                serverStatus.playPrevious();
                 break;
 
             case R.id.music_play_pause_btn:
-                playerState.togglePlaying();
+                serverStatus.togglePlaying();
                 refreshPlayPauseBtnState();
 
-                serverConnect.executeAction(Action.togglePlayPause(this));
                 break;
 
             case R.id.music_next_btn:
-                serverConnect.executeAction(Action.playNext(this));
+                serverStatus.playNext();
                 break;
 
             case R.id.music_repeat_btn:
-                playerState.nextRepeatMode();
+                serverStatus.nextRepeatMode();
                 refreshRepeatBtnState();
-
-                serverConnect.executeAction(Action.setRepeatMode(playerState.getRepeatMode(), this));
                 break;
         }
     }
-
 
     /**
      * Wendet den Playerstatus des Servers an
@@ -174,14 +158,14 @@ public class PlayerBar extends RelativeLayout implements ResponseListener {
         refreshShuffleBtnState();
         refreshPlayPauseBtnState();
 
-        if (!playerState.isPlaying()) {
+        if (!serverStatus.isPlaying()) {
             if (playProgressTimer != null) {
                 playProgressTimer.cancel();
             }
             playProgressTimer = null;
             System.out.println("playback paused, timer cancelled");
         } else if (playProgressTimer == null) {
-            int remainingTime = playerState.getRemainingSeconds();
+            int remainingTime = serverStatus.getRemainingSeconds();
 
             if (remainingTime > 1) {
                 playProgressTimer = new PlayProgressTimer(remainingTime);
@@ -195,19 +179,19 @@ public class PlayerBar extends RelativeLayout implements ResponseListener {
      * Setzt Titel und Interpret
      */
     private void refreshCurrentPlayingTexts() {
-        musicCurrentArtistText.setText(playerState.getCurrentArtist());
-        musicCurrentTitleText.setText(playerState.getCurrentTitle());
+        musicCurrentArtistText.setText(serverStatus.getCurrentArtist());
+        musicCurrentTitleText.setText(serverStatus.getCurrentTitle());
     }
 
     /**
      * Setzt aktuellen und maximalen Wert der musicCurrentSeekBar
      */
     private void refreshProgressBar() {
-        if (musicCurrentSeekBar.getMax() != playerState.getTrackLength()) {
+        if (musicCurrentSeekBar.getMax() != serverStatus.getTrackLength()) {
             musicCurrentSeekBar.setProgress(0);
-            musicCurrentSeekBar.setMax(playerState.getTrackLength());
+            musicCurrentSeekBar.setMax(serverStatus.getTrackLength());
         }
-        musicCurrentSeekBar.setProgress(playerState.getPlayPosition());
+        musicCurrentSeekBar.setProgress(serverStatus.getPlayPosition());
     }
 
     /**
@@ -215,7 +199,7 @@ public class PlayerBar extends RelativeLayout implements ResponseListener {
      */
     private void refreshPlayPauseBtnState() {
         int imageResource;
-        if (playerState.isPlaying()) {
+        if (serverStatus.isPlaying()) {
             imageResource = R.drawable.ic_pause_circle_filled_deep_orange_a200_36dp;
         } else {
             imageResource = R.drawable.ic_play_circle_filled_deep_orange_a200_36dp;
@@ -229,7 +213,7 @@ public class PlayerBar extends RelativeLayout implements ResponseListener {
     private void refreshShuffleBtnState() {
         int imageResource;
 
-        if (playerState.isShuffle()) {
+        if (serverStatus.isShuffle()) {
             imageResource = R.drawable.ic_shuffle_deep_orange_a200_36dp;
         } else {
             imageResource = R.drawable.ic_shuffle_grey_600_36dp;
@@ -238,14 +222,15 @@ public class PlayerBar extends RelativeLayout implements ResponseListener {
         musicShuffleBtn.setImageResource(imageResource);
     }
 
+
     /**
      * Passt das Icon des Wiederholungsmodus-Buttons an
      */
     private void refreshRepeatBtnState() {
         int imageResource;
-        if (playerState.getRepeatMode() == PlayerState.REPEAT_MODE_NONE) {
+        if (serverStatus.getRepeatMode() == ServerStatus.REPEAT_MODE_NONE) {
             imageResource = R.drawable.ic_repeat_grey_600_36dp;
-        } else if (playerState.getRepeatMode() == PlayerState.REPEAT_MODE_ONE) {
+        } else if (serverStatus.getRepeatMode() == ServerStatus.REPEAT_MODE_ONE) {
             imageResource = R.drawable.ic_repeat_one_deep_orange_a200_36dp;
         } else {
             imageResource = R.drawable.ic_repeat_deep_orange_a200_36dp;

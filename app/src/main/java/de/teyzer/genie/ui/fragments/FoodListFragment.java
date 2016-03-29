@@ -33,18 +33,16 @@ import de.teyzer.genie.ui.dialogs.EditQuantityDialogFragment;
 public class FoodListFragment extends AbstractFragment {
     public static final String FRAGMENT_TAG = "food_list";
 
-    public static final int REQUEST_NEW_FOOD_TYPE = 0;
-    public static final int REQUEST_EDIT_FOOD_TYPE = 1;
-    public static final int REQUEST_EDIT_FOOD_QUANTITY = 2;
-    public static final int REQUEST_NEW_PRODUCT = 3;
-    public static final int REQUEST_EDIT_PRODUCT = 4;
+    private static final int REQUEST_NEW_FOOD_TYPE = 0;
+    private static final int REQUEST_EDIT_FOOD_TYPE = 1;
+    private static final int REQUEST_EDIT_FOOD_QUANTITY = 2;
+    private static final int REQUEST_NEW_PRODUCT = 3;
+    private static final int REQUEST_EDIT_PRODUCT = 4;
 
     @Bind(R.id.food_list)
-    RecyclerView foodList;
-    @Bind(R.id.food_list_fab)
-    FloatingActionButton foodListFab;
+    private RecyclerView foodList;
     @Bind(R.id.toolbar)
-    Toolbar toolbar;
+    private Toolbar toolbar;
 
     private FoodAdapter mAdapter;
     private FoodListFragment foodListFragment;
@@ -253,7 +251,7 @@ public class FoodListFragment extends AbstractFragment {
      * Adapter zum Darstellen der Nahrungsmitteltypen in der Liste
      */
     private class FoodAdapter extends RecyclerView.Adapter<ViewHolder> {
-        DataManager dataManager;
+        final DataManager dataManager;
 
         /**
          * Erstellt einen neuen FoodAdapter und holt den Datenmanager von der Activity
@@ -286,11 +284,11 @@ public class FoodListFragment extends AbstractFragment {
      * Verwaltet einen Eintrag in der RecyclerView
      */
     private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        public View itemView;
-        public TextView titleText;
-        public Button addCommonPackButton;
+        public final View itemView;
+        public final TextView titleText;
+        public final Button addCommonPackButton;
         private FoodType foodType;
-        private DataManager dataManager;
+        private final DataManager dataManager;
 
         /**
          * Erstellt einen neuen ViewHolder, der die Views einer Zeile in der RecyclerView verwaltet

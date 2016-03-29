@@ -37,16 +37,18 @@ public class NewProductActivity extends AppCompatActivity {
     public static final String RESULT_FOOD_TYPE = "food_type";
     public static final String RESULT_PACK_SIZE = "pack_size";
     public static final String RESULT_BARCODE = "barcode";
+
     @Bind(R.id.food_type_spinner)
-    Spinner foodTypeSpinner;
+    private Spinner foodTypeSpinner;
     @Bind(R.id.name_text_box)
-    EditText nameBox;
+    private EditText nameBox;
     @Bind(R.id.store_text_box)
-    EditText storeBox;
+    private EditText storeBox;
     @Bind(R.id.new_product_pack_size)
-    EditText quantityBox;
+    private EditText quantityBox;
     @Bind(R.id.new_product_unit)
-    TextView unitLabel;
+    private TextView unitLabel;
+
     private FoodType[] foodTypes;
     private Product product;
     private String barcode;
@@ -138,7 +140,7 @@ public class NewProductActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void saveAndFinish() {
+    private void saveAndFinish() {
         String name = nameBox.getText().toString();
         String store = storeBox.getText().toString();
         int foodTypePosition = foodTypeSpinner.getSelectedItemPosition();

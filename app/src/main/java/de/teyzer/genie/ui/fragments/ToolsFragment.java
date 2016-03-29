@@ -7,13 +7,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import de.teyzer.genie.R;
-import de.teyzer.genie.connect.Action;
 import de.teyzer.genie.scanner.IntentIntegrator;
 import de.teyzer.genie.scanner.IntentResult;
 
@@ -21,9 +19,7 @@ public class ToolsFragment extends AbstractFragment {
     public static final String FRAGMENT_TAG = "tools_fragment";
 
     @Bind(R.id.toolbar)
-    Toolbar toolbar;
-    @Bind(R.id.tools_freq_btn)
-    Button toolsFreqBtn;
+    private Toolbar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -73,8 +69,7 @@ public class ToolsFragment extends AbstractFragment {
             //Scan-result bearbeiten
             IntentResult scanResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
             if (scanResult != null) {
-                mListener.getServerConnect().executeAction(Action.sendString(scanResult.getContents()));
-
+                mListener.getServerStatus().sendString(scanResult.getContents());
                 //neuen scan starten
                 startScan();
             }
@@ -86,6 +81,5 @@ public class ToolsFragment extends AbstractFragment {
         super.onDestroyView();
         ButterKnife.unbind(this);
     }
-
 
 }

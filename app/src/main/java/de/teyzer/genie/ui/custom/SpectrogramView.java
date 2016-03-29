@@ -31,9 +31,9 @@ public class SpectrogramView extends View {
     private float firstTouchY;
     private boolean movedWhileTouch = false;
 
-    ScaleGestureDetector scaleGestureDetector;
+    private ScaleGestureDetector scaleGestureDetector;
 
-    List<Map.Entry<Double, Double>> list;
+    private List<Map.Entry<Double, Double>> list;
     private int paddingLeft;
     private int paddingBottom;
     private float drawMinFreq;

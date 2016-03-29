@@ -1,7 +1,7 @@
 package de.teyzer.genie.connect;
 
 
-public interface ResponseListener {
+interface ResponseListener {
     /**
      * Wird ausgelöst, wenn eine Status-Antwort vom Server gekommen ist
      *

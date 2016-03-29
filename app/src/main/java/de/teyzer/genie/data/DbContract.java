@@ -2,7 +2,7 @@ package de.teyzer.genie.data;
 
 import android.provider.BaseColumns;
 
-public final class DbContract {
+final class DbContract {
     public DbContract() {
     }
 

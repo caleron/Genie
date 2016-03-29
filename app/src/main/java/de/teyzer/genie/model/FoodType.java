@@ -15,15 +15,15 @@ import de.teyzer.genie.R;
  * Stellt ein Nahrungsmitteltyp dar, etwa Eier oder Mehl
  */
 public class FoodType implements Parcelable {
-    public static List<String> QUANTITY_TYPES;
-    public static List<String> PREFERRED_MEALS;
+    public static final List<String> QUANTITY_TYPES;
+    public static final List<String> PREFERRED_MEALS;
 
     static {
         QUANTITY_TYPES = Arrays.asList("count", "weight", "volume", "pack", "can");
         PREFERRED_MEALS = Arrays.asList("breakfast", "lunch", "dinner", "snack", "other");
     }
 
-    private int id;
+    private final int id;
     private String name;
     /**
      * Etwa Kühl- oder Tiefkühlware
@@ -54,7 +54,7 @@ public class FoodType implements Parcelable {
         updateData(name, category, quantity, quantityType, preferredMeal, commonPackSize);
     }
 
-    public FoodType(Parcel parcel) {
+    private FoodType(Parcel parcel) {
         this.id = parcel.readInt();
         this.name = parcel.readString();
         this.category = parcel.readString();

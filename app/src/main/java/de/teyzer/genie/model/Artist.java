@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.Comparator;
 
 public class Artist {
-    public ArrayList<Album> albums;
-    String name;
+    public final ArrayList<Album> albums;
+    private final String name;
 
     public Artist(String name) {
         albums = new ArrayList<>();

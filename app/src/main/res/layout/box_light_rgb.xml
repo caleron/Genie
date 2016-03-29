@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/light_rgb_mode_box"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    tools:showIn="@layout/fragment_light">
+
+    <TextView
+        android:id="@+id/light_red_label"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:padding="@dimen/small_padding"
+        android:text="Rot:"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <SeekBar
+        android:id="@+id/light_red_seekbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@id/light_red_label"
+        android:layout_toEndOf="@+id/light_red_label"
+        android:max="255"
+        android:paddingTop="@dimen/small_padding" />
+
+    <TextView
+        android:id="@+id/light_green_label"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/light_red_label"
+        android:layout_below="@+id/light_red_label"
+        android:padding="@dimen/small_padding"
+        android:text="Grün:"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+    <SeekBar
+        android:id="@+id/light_green_seekbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@id/light_green_label"
+        android:layout_toEndOf="@id/light_green_label"
+        android:max="255"
+        android:paddingTop="@dimen/small_padding" />
+
+    <TextView
+        android:id="@+id/light_blue_label"
+        android:layout_width="50dp"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/light_green_label"
+        android:layout_below="@+id/light_green_label"
+        android:padding="@dimen/small_padding"
+        android:text="Blau:"
+        android:textAppearance="?android:attr/textAppearanceSmall" />
+
+
+    <SeekBar
+        android:id="@+id/light_blue_seekbar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignTop="@id/light_blue_label"
+        android:layout_toEndOf="@id/light_blue_label"
+        android:max="255"
+        android:paddingTop="@dimen/small_padding" />
+</RelativeLayout>

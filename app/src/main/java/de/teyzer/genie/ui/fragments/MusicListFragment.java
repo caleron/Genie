@@ -17,22 +17,21 @@ import java.util.ArrayList;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import de.teyzer.genie.R;
-import de.teyzer.genie.connect.Action;
-import de.teyzer.genie.connect.UploadAndResponseListener;
+import de.teyzer.genie.connect.UploadStatusListener;
 import de.teyzer.genie.model.Album;
 import de.teyzer.genie.model.Artist;
 import de.teyzer.genie.model.Track;
 
 public class MusicListFragment extends AbstractFragment {
-    public static final int MODE_TITLE = 0;
-    public static final int MODE_ARTIST = 1;
-    public static final int MODE_ALBUM = 2;
+    private static final int MODE_TITLE = 0;
+    private static final int MODE_ARTIST = 1;
+    private static final int MODE_ALBUM = 2;
 
     @Bind(R.id.music_list)
-    RecyclerView trackListView;
+    private RecyclerView trackListView;
 
     private MusicAdapter musicAdapter;
-    private UploadAndResponseListener listener;
+    private UploadStatusListener listener;
 
     private int displayMode;
 
@@ -44,21 +43,21 @@ public class MusicListFragment extends AbstractFragment {
     private ArrayList<Artist> allArtists;
     private ArrayList<Album> allAlbums;
 
-    public void setTrackMode(UploadAndResponseListener parentFragment, ArrayList<Track> tracks) {
+    public void setTrackMode(UploadStatusListener parentFragment, ArrayList<Track> tracks) {
         this.listener = parentFragment;
         this.displayMode = MODE_TITLE;
         allTracks = tracks;
         displayTracks = tracks;
     }
 
-    public void setAlbumMode(UploadAndResponseListener parentFragment, ArrayList<Album> albums) {
+    public void setAlbumMode(UploadStatusListener parentFragment, ArrayList<Album> albums) {
         this.listener = parentFragment;
         this.displayMode = MODE_ALBUM;
         allAlbums = albums;
         displayAlbums = albums;
     }
 
-    public void setArtistMode(UploadAndResponseListener parentFragment, ArrayList<Artist> artists) {
+    public void setArtistMode(UploadStatusListener parentFragment, ArrayList<Artist> artists) {
         this.listener = parentFragment;
         this.displayMode = MODE_ARTIST;
         allArtists = artists;
@@ -93,7 +92,7 @@ public class MusicListFragment extends AbstractFragment {
      * @param title Der Suchtitel
      * @return Liste passender Tracks
      */
-    public ArrayList<Track> findTracks(String title) {
+    private ArrayList<Track> findTracks(String title) {
         if (title.length() == 0) {
             return allTracks;
         }
@@ -116,7 +115,7 @@ public class MusicListFragment extends AbstractFragment {
      * @param title Der Suchbegriff
      * @return Liste passender Interpreten
      */
-    public ArrayList<Artist> findArtists(String title) {
+    private ArrayList<Artist> findArtists(String title) {
         if (title.length() == 0) {
             return allArtists;
         }
@@ -139,7 +138,7 @@ public class MusicListFragment extends AbstractFragment {
      * @param title Der Suchbegriff
      * @return Liste passender Alben
      */
-    public ArrayList<Album> findAlbums(String title) {
+    private ArrayList<Album> findAlbums(String title) {
         if (title.length() == 0) {
             return allAlbums;
         }
@@ -245,8 +244,8 @@ public class MusicListFragment extends AbstractFragment {
      * Verwaltet einen Eintrag in der RecyclerView
      */
     private class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView titleView;
-        TextView subTitleView;
+        final TextView titleView;
+        final TextView subTitleView;
 
         Track track;
         Album album;
@@ -289,7 +288,7 @@ public class MusicListFragment extends AbstractFragment {
                     File f = new File(track.getPath());
                     Uri uri = Uri.fromFile(f);
                     System.out.println(uri);
-                    mListener.getServerConnect().executeAction(Action.playFile(uri, listener, listener));
+                    mListener.getServerStatus().playFile(uri, listener);
                     break;
                 case MODE_ALBUM:
                     //Album anzeigen

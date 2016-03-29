@@ -32,21 +32,21 @@ public class EditQuantityDialogFragment extends DialogFragment {
     public static final String STATE_QUANTITY_TYPE = "quantity_type";
     public static final String STATE_COMMON_PACK_SIZE = "pack_size";
 
-    ArrayList<String> numberPickerValues;
+    private ArrayList<String> numberPickerValues;
 
-    int foodTypeId;
-    String name;
-    Double quantity;
-    String unit;
-    String quantityType;
-    Double commonPackSize;
+    private int foodTypeId;
+    private String name;
+    private Double quantity;
+    private String unit;
+    private String quantityType;
+    private Double commonPackSize;
 
     @Bind(R.id.edit_quantity_dialog_title)
-    TextView titleLabel;
+    private TextView titleLabel;
     @Bind(R.id.edit_quantity_dialog_number_picker)
-    NumberPicker numberPicker;
+    private NumberPicker numberPicker;
     @Bind(R.id.edit_quantity_dialog_unit)
-    TextView unitLabel;
+    private TextView unitLabel;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

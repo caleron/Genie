@@ -15,7 +15,7 @@ import de.teyzer.genie.R;
 public class SettingsFragment extends PreferenceFragmentCompat {
     public static final String FRAGMENT_TAG = "settings";
 
-    private static Preference.OnPreferenceChangeListener preferenceChangeListener = new Preference.OnPreferenceChangeListener() {
+    private static final Preference.OnPreferenceChangeListener preferenceChangeListener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object value) {
             String stringValue = value.toString();

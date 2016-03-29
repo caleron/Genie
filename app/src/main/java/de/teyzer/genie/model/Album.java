@@ -3,9 +3,9 @@ package de.teyzer.genie.model;
 import java.util.ArrayList;
 
 public class Album {
-    String artistName;
-    String albumName;
-    ArrayList<Track> tracks;
+    private final String artistName;
+    private final String albumName;
+    private final ArrayList<Track> tracks;
 
     public Album(String albumName, String artistName) {
         tracks = new ArrayList<>();

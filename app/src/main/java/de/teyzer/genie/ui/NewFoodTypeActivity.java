@@ -31,23 +31,23 @@ public class NewFoodTypeActivity extends AppCompatActivity {
     public static final String RESULT_PACK_SIZE = "pack_size";
     public static final String RESULT_CURRENT_QUANTITY = "current_quantity";
 
-    int editFoodTypeId;
-    boolean editMode = false;
+    private int editFoodTypeId;
+    private boolean editMode = false;
 
     @Bind(R.id.name_text_box)
-    EditText nameTextBox;
+    private EditText nameTextBox;
     @Bind(R.id.quantity_type_spinner)
-    Spinner quantityTypeSpinner;
+    private Spinner quantityTypeSpinner;
     @Bind(R.id.preferred_meal_spinner)
-    Spinner preferredMealSpinner;
+    private Spinner preferredMealSpinner;
     @Bind(R.id.pack_size_box)
-    EditText packSizeBox;
+    private EditText packSizeBox;
     @Bind(R.id.pack_size_unit_label)
-    TextView packSizeUnitLabel;
+    private TextView packSizeUnitLabel;
     @Bind(R.id.current_quantity_box)
-    EditText currentQuantityBox;
+    private EditText currentQuantityBox;
     @Bind(R.id.current_quantity_unit_label)
-    TextView currentQuantityUnitLabel;
+    private TextView currentQuantityUnitLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +148,7 @@ public class NewFoodTypeActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void saveAndFinish() {
+    private void saveAndFinish() {
         //TODO testen
         String name = nameTextBox.getText().toString();
         Double packSize = 1.0;

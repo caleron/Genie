@@ -33,7 +33,7 @@ public class MediaScanner implements Prefs {
             if (success) {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(PREF_LAST_MEDIASTORE_VERSION, mediaStoreVersion);
-                editor.commit();
+                editor.apply();
             }
         }
     }
