@@ -27,13 +27,13 @@ public class ArtistFragment extends AbstractFragment {
     public static final String FRAGMENT_TAG = "artist_fragment";
 
     @Bind(R.id.toolbar)
-    private Toolbar toolbar;
+    Toolbar toolbar;
     @Bind(R.id.music_player_bar)
-    private PlayerBar playerBar;
+    PlayerBar playerBar;
     @Bind(R.id.music_list_pager)
-    private ViewPager viewPager;
+    ViewPager viewPager;
     @Bind(R.id.tab_layout)
-    private TabLayout tabLayout;
+    TabLayout tabLayout;
 
     private MusicTabPagerAdapter musicTabPagerAdapter;
     private Artist displayArtist;

@@ -21,17 +21,17 @@ import de.teyzer.genie.data.DataProvider;
 public class PlayerBar extends RelativeLayout implements StatusChangedListener {
 
     @Bind(R.id.music_shuffle_btn)
-    private ImageButton musicShuffleBtn;
+    ImageButton musicShuffleBtn;
     @Bind(R.id.music_play_pause_btn)
-    private ImageButton musicPlayPauseBtn;
+    ImageButton musicPlayPauseBtn;
     @Bind(R.id.music_repeat_btn)
-    private ImageButton musicRepeatBtn;
+    ImageButton musicRepeatBtn;
     @Bind(R.id.music_current_title_text)
-    private TextView musicCurrentTitleText;
+    TextView musicCurrentTitleText;
     @Bind(R.id.music_current_artist_text)
-    private TextView musicCurrentArtistText;
+    TextView musicCurrentArtistText;
     @Bind(R.id.music_current_progress_bar)
-    private SeekBar musicCurrentSeekBar;
+    SeekBar musicCurrentSeekBar;
 
     //null, falls nicht mehr aktiv
     private PlayProgressTimer playProgressTimer;

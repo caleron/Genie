@@ -42,11 +42,11 @@ public class EditQuantityDialogFragment extends DialogFragment {
     private Double commonPackSize;
 
     @Bind(R.id.edit_quantity_dialog_title)
-    private TextView titleLabel;
+    TextView titleLabel;
     @Bind(R.id.edit_quantity_dialog_number_picker)
-    private NumberPicker numberPicker;
+    NumberPicker numberPicker;
     @Bind(R.id.edit_quantity_dialog_unit)
-    private TextView unitLabel;
+    TextView unitLabel;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {

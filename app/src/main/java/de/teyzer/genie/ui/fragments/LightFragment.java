@@ -3,6 +3,8 @@ package de.teyzer.genie.ui.fragments;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
@@ -31,32 +33,46 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
     public static final String FRAGMENT_TAG = "light_fragment";
 
     @Bind(R.id.light_white_seekbar)
-    private SeekBar lightWhiteSeekbar;
+    SeekBar lightWhiteSeekbar;
     @Bind(R.id.light_red_seekbar)
-    private SeekBar lightRedSeekbar;
+    SeekBar lightRedSeekbar;
     @Bind(R.id.light_green_seekbar)
-    private SeekBar lightGreenSeekbar;
+    SeekBar lightGreenSeekbar;
     @Bind(R.id.light_blue_seekbar)
-    private SeekBar lightBlueSeekbar;
+    SeekBar lightBlueSeekbar;
     @Bind(R.id.light_color_picker)
-    private ColorPicker lightColorPicker;
+    ColorPicker lightColorPicker;
     @Bind(R.id.light_color_svbar)
-    private SVBar lightColorSvbar;
+    SVBar lightColorSvbar;
     @Bind(R.id.light_rgb_mode_box)
-    private RelativeLayout lightRgbModeBox;
+    RelativeLayout lightRgbModeBox;
     @Bind(R.id.light_color_picker_mode_box)
-    private RelativeLayout lightColorPickerModeBox;
+    RelativeLayout lightColorPickerModeBox;
     @Bind(R.id.light_color_manually_box)
-    private RelativeLayout lightColorManuallyBox;
+    RelativeLayout lightColorManuallyBox;
     @Bind(R.id.toolbar)
-    private Toolbar toolbar;
+    Toolbar toolbar;
     @Bind(R.id.light_color_mode_spinner)
-    private Spinner colorModeSpinner;
+    Spinner colorModeSpinner;
 
 
     //nötig, damit keine Events gesendet werden, während die Instanz wiederhergestellt wird
     private boolean suppressEvents = true;
     private ServerStatus serverStatus;
+
+    private Handler handler = new Handler();
+    private Runnable refreshRunnable = new Runnable() {
+        @Override
+        public void run() {
+            suppressServerState = false;
+            serverStatusChanged(false);
+        }
+    };
+    /**
+     * Während die Seekbars benutzt werden, sollen diese nicht aktualisiert werden, um "springen"
+     * zu vermeiden
+     */
+    private boolean suppressServerState = false;
 
     public LightFragment() {
         // Required empty public constructor
@@ -151,19 +167,23 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
     }
 
     @Override
-    public void onColorChanged(int color) {
+    public void onColorChanged(int color, boolean fromUser) {
         //System.out.println("changed color = [" + color + "]    " + lightColorPicker.getColor());
-        if (!suppressEvents) {
-            serverStatus.setRGBColor(color);
-        }
+        if (suppressEvents ||!fromUser)
+            return;
+
+        suppressServerState = true;
+        serverStatus.setRGBColor(color);
     }
 
     @Override
-    public void onColorSelected(int color) {
+    public void onColorSelected(int color, boolean fromUser) {
         //System.out.println("selected color = [" + color + "]" + "    " + lightColorPicker.getColor());
-        if (!suppressEvents) {
-            serverStatus.setRGBColor(color);
-        }
+        if (!fromUser || suppressEvents)
+            return;
+
+        suppressServerState = false;
+        serverStatus.setRGBColor(color);
     }
 
     /**
@@ -171,7 +191,7 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
      */
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        if (suppressEvents)
+        if (suppressEvents || !fromUser)
             return;
 
         switch (seekBar.getId()) {
@@ -198,6 +218,7 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
      */
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
+        suppressServerState = true;
     }
 
     /**
@@ -205,6 +226,8 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
      */
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
+        suppressServerState = false;
+        serverStatusChanged(false);
     }
 
     /**
@@ -277,14 +300,32 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
     }
 
     @Override
-    public void serverStatusChanged(boolean newSong) {
+    public void serverStatusChanged(final boolean newSong) {
+        if (colorModeSpinner == null || suppressServerState)
+            return;
+
+        //Auf UI-Thread ausführen
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            colorModeSpinner.post(new Runnable() {
+                @Override
+                public void run() {
+                    serverStatusChanged(newSong);
+                }
+            });
+            return;
+        }
+
         String colorMode = serverStatus.getColorMode();
+
+        if (colorMode == null)
+            return;
+
         switch (colorMode) {
             case "music":
                 colorModeSpinner.setSelection(0);
                 break;
 
-            case "custom"://TODO timer einfügen, in der das setzen des Progress der Seekbars gesperrt wird, um springen zu vermeiden
+            case "custom":
                 int currentSelectedItem = colorModeSpinner.getSelectedItemPosition();
                 if (currentSelectedItem != 1 && currentSelectedItem != 2) {
                     colorModeSpinner.setSelection(1);

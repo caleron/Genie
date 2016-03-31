@@ -43,5 +43,5 @@ dependencies {
     compile 'com.android.support:preference-v14:23.2.1'
     compile 'com.jakewharton:butterknife:7.0.1'
 
-    compile 'com.github.caleron:HoloColorPicker:74149890a2'
+    compile 'com.github.caleron:HoloColorPicker:b9d7475b24'
 }

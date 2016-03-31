@@ -191,6 +191,7 @@ public class ServerStatus implements Serializable, ResponseListener {
      * @param brightness Zahl zwischen 0 und 100
      */
     public void setWhiteBrightness(int brightness) {
+        whiteBrightness = brightness;
         serverConnect.executeAction(Action.setWhiteBrightness(brightness, this));
     }
 

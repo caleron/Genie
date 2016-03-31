@@ -25,11 +25,11 @@ public class AlbumFragment extends AbstractFragment {
     public static final String FRAGMENT_TAG = "album_fragment";
 
     @Bind(R.id.toolbar)
-    private Toolbar toolbar;
+    Toolbar toolbar;
     @Bind(R.id.album_track_list)
-    private RecyclerView trackListView;
+    RecyclerView trackListView;
     @Bind(R.id.album_player_bar)
-    private PlayerBar playerBar;
+    PlayerBar playerBar;
 
     private UploadStatusListener listener;
 

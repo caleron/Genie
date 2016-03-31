@@ -39,9 +39,9 @@ public class FoodListFragment extends AbstractFragment {
     private static final int REQUEST_EDIT_PRODUCT = 4;
 
     @Bind(R.id.food_list)
-    private RecyclerView foodList;
+    RecyclerView foodList;
     @Bind(R.id.toolbar)
-    private Toolbar toolbar;
+    Toolbar toolbar;
 
     private FoodAdapter mAdapter;
     private FoodListFragment foodListFragment;

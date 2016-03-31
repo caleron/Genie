@@ -39,15 +39,15 @@ public class NewProductActivity extends AppCompatActivity {
     public static final String RESULT_BARCODE = "barcode";
 
     @Bind(R.id.food_type_spinner)
-    private Spinner foodTypeSpinner;
+    Spinner foodTypeSpinner;
     @Bind(R.id.name_text_box)
-    private EditText nameBox;
+    EditText nameBox;
     @Bind(R.id.store_text_box)
-    private EditText storeBox;
+    EditText storeBox;
     @Bind(R.id.new_product_pack_size)
-    private EditText quantityBox;
+    EditText quantityBox;
     @Bind(R.id.new_product_unit)
-    private TextView unitLabel;
+    TextView unitLabel;
 
     private FoodType[] foodTypes;
     private Product product;

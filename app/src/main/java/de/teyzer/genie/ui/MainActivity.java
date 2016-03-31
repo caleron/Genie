@@ -44,9 +44,9 @@ public class MainActivity extends AppCompatActivity
     private int startFragmentMenuItemId = R.id.nav_light_remote;
 
     @Bind(R.id.nav_view)
-    private NavigationView navView;
+    NavigationView navView;
     @Bind(R.id.drawer_layout)
-    private DrawerLayout drawerLayout;
+    DrawerLayout drawerLayout;
 
     private ActionBarDrawerToggle lastActionBarDrawerToggle = null;
     private ServerStatus serverStatus;

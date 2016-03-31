@@ -35,19 +35,19 @@ public class NewFoodTypeActivity extends AppCompatActivity {
     private boolean editMode = false;
 
     @Bind(R.id.name_text_box)
-    private EditText nameTextBox;
+    EditText nameTextBox;
     @Bind(R.id.quantity_type_spinner)
-    private Spinner quantityTypeSpinner;
+    Spinner quantityTypeSpinner;
     @Bind(R.id.preferred_meal_spinner)
-    private Spinner preferredMealSpinner;
+    Spinner preferredMealSpinner;
     @Bind(R.id.pack_size_box)
-    private EditText packSizeBox;
+    EditText packSizeBox;
     @Bind(R.id.pack_size_unit_label)
-    private TextView packSizeUnitLabel;
+    TextView packSizeUnitLabel;
     @Bind(R.id.current_quantity_box)
-    private EditText currentQuantityBox;
+    EditText currentQuantityBox;
     @Bind(R.id.current_quantity_unit_label)
-    private TextView currentQuantityUnitLabel;
+    TextView currentQuantityUnitLabel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

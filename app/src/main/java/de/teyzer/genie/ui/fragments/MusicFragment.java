@@ -33,13 +33,13 @@ public class MusicFragment extends AbstractFragment implements UploadStatusListe
     private static MusicFragment musicFragment;
 
     @Bind(R.id.music_list_pager)
-    private ViewPager musicListPager;
+    ViewPager musicListPager;
     @Bind(R.id.toolbar)
-    private Toolbar toolbar;
+    Toolbar toolbar;
     @Bind(R.id.tab_layout)
-    private TabLayout tabLayout;
+    TabLayout tabLayout;
     @Bind(R.id.music_player_bar)
-    private PlayerBar playerBar;
+    PlayerBar playerBar;
 
     private UploadStatusDialogFragment uploadStatusDialogFragment = null;
     private MusicTabPagerAdapter musicTabPagerAdapter;

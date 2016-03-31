@@ -28,7 +28,7 @@ public class MusicListFragment extends AbstractFragment {
     private static final int MODE_ALBUM = 2;
 
     @Bind(R.id.music_list)
-    private RecyclerView trackListView;
+    RecyclerView trackListView;
 
     private MusicAdapter musicAdapter;
     private UploadStatusListener listener;

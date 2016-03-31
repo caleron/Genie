@@ -24,9 +24,9 @@ public class FrequencyFragment extends AbstractFragment {
     public static final String FRAGMENT_TAG = "frequency_fragment";
 
     @Bind(R.id.toolbar)
-    private Toolbar toolbar;
+    Toolbar toolbar;
     @Bind(R.id.frequency_spectrogram)
-    private SpectrogramView spectrogramView;
+    SpectrogramView spectrogramView;
 
     private FFTTask fftTask;
 

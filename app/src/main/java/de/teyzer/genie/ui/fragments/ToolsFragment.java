@@ -19,7 +19,7 @@ public class ToolsFragment extends AbstractFragment {
     public static final String FRAGMENT_TAG = "tools_fragment";
 
     @Bind(R.id.toolbar)
-    private Toolbar toolbar;
+    Toolbar toolbar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -19,9 +19,9 @@ public class UploadStatusDialogFragment extends DialogFragment {
     public static final String FRAGMENT_TAG = "upload_status_dialog_fragment";
 
     @Bind(R.id.upload_dialog_title)
-    private TextView title;
+    TextView title;
     @Bind(R.id.upload_dialog_progressbar)
-    private ProgressBar progressBar;
+    ProgressBar progressBar;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
