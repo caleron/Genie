@@ -154,7 +154,12 @@ public class Action {
         switch (command) {
             case "playFile":
                 MediaMetadataRetriever mmr = new MediaMetadataRetriever();
-                mmr.setDataSource(fileUri.getPath());
+                try {
+                    mmr.setDataSource(fileUri.getPath());
+                } catch (IllegalArgumentException ex) {
+                    //Falls die Datei nicht mehr existiert
+                    listener.fileNotFound();
+                }
 
                 String artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
                 String title = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_TITLE);

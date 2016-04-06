@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
@@ -27,6 +28,8 @@ public class FrequencyFragment extends AbstractFragment {
     Toolbar toolbar;
     @Bind(R.id.frequency_spectrogram)
     SpectrogramView spectrogramView;
+    @Bind(R.id.frequency_layout)
+    LinearLayout linearLayout;
 
     private FFTTask fftTask;
 
@@ -52,6 +55,11 @@ public class FrequencyFragment extends AbstractFragment {
     public void onPause() {
         super.onPause();
         fftTask.interrupt();
+    }
+
+    @Override
+    public View getMainLayout() {
+        return linearLayout;
     }
 
     private class FFTTask extends Thread {

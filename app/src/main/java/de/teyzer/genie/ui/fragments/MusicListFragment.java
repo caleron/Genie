@@ -42,6 +42,7 @@ public class MusicListFragment extends AbstractFragment {
     private ArrayList<Track> allTracks;
     private ArrayList<Artist> allArtists;
     private ArrayList<Album> allAlbums;
+    private boolean searchMode;
 
     public void setTrackMode(UploadStatusListener parentFragment, ArrayList<Track> tracks) {
         this.listener = parentFragment;
@@ -62,6 +63,30 @@ public class MusicListFragment extends AbstractFragment {
         this.displayMode = MODE_ARTIST;
         allArtists = artists;
         displayArtists = artists;
+    }
+
+    public void updateTracks(ArrayList<Track> tracks) {
+        allTracks = tracks;
+        if (!searchMode) {
+            displayTracks = tracks;
+        }
+        musicAdapter.notifyDataSetChanged();
+    }
+
+    public void updateAlbums(ArrayList<Album> albums) {
+        allAlbums = albums;
+        if (!searchMode) {
+            displayAlbums = albums;
+        }
+        musicAdapter.notifyDataSetChanged();
+    }
+
+    public void updateArtists(ArrayList<Artist> artists) {
+        allArtists = artists;
+        if (!searchMode) {
+            displayArtists = artists;
+        }
+        musicAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -159,6 +184,7 @@ public class MusicListFragment extends AbstractFragment {
      * @param searchMode True, wenn Suchlisten verwendet werden sollen.
      */
     public void setSearchMode(boolean searchMode) {
+        this.searchMode = searchMode;
         if (!searchMode) {
             //Wenn deaktiviert
             displayTracks = allTracks;
@@ -181,6 +207,11 @@ public class MusicListFragment extends AbstractFragment {
                 break;
         }
         musicAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public View getMainLayout() {
+        return null;
     }
 
     /**

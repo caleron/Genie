@@ -9,4 +9,10 @@ interface ResponseListener {
      * @param response     Die Antwort
      */
     void responseReceived(Action sourceAction, String response);
+
+    /**
+     * Wird ausgelöst, wenn eine Datei nicht gefunden wurde, die abgespielt werden sollte.
+     */
+    void fileNotFound();
+
 }

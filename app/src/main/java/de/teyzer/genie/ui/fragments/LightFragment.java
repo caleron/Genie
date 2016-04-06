@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -54,7 +55,8 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
     Toolbar toolbar;
     @Bind(R.id.light_color_mode_spinner)
     Spinner colorModeSpinner;
-
+    @Bind(R.id.light_main_layout)
+    LinearLayout mainLayout;
 
     //nötig, damit keine Events gesendet werden, während die Instanz wiederhergestellt wird
     private boolean suppressEvents = true;
@@ -351,5 +353,10 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
         }
 
         lightWhiteSeekbar.setProgress(serverStatus.getWhiteBrightness());
+    }
+
+    @Override
+    public View getMainLayout() {
+        return mainLayout;
     }
 }

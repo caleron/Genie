@@ -38,8 +38,14 @@ public class MediaScanner implements Prefs {
         }
     }
 
-
-    private static boolean performSongScan(Context context, DataManager dataManager) {
+    /**
+     * Führt die Abfrage von Songs durch
+     *
+     * @param context     ein Context
+     * @param dataManager Der Datamanager
+     * @return true, wenn kein Fehler aufgetreten ist
+     */
+    public static boolean performSongScan(Context context, DataManager dataManager) {
         ArrayList<Track> songs = null;
         boolean noErrorOccured = true;
 

@@ -3,6 +3,7 @@ package de.teyzer.genie.ui.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -42,6 +43,8 @@ public class FoodListFragment extends AbstractFragment {
     RecyclerView foodList;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
+    @Bind(R.id.food_coordinator_layout)
+    CoordinatorLayout coordinatorLayout;
 
     private FoodAdapter mAdapter;
     private FoodListFragment foodListFragment;
@@ -244,6 +247,11 @@ public class FoodListFragment extends AbstractFragment {
     @OnClick(R.id.food_list_fab)
     public void onClick() {
         startCaptureMode(false);
+    }
+
+    @Override
+    public View getMainLayout() {
+        return coordinatorLayout;
     }
 
     /**

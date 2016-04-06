@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
+import de.teyzer.genie.data.DataProvider;
+
 public class ServerStatus implements Serializable, ResponseListener {
     public static final int REPEAT_MODE_NONE = 0;
     public static final int REPEAT_MODE_ONE = 1;
@@ -21,6 +23,7 @@ public class ServerStatus implements Serializable, ResponseListener {
 
     private final Set<StatusChangedListener> listenerList = new HashSet<>();
     private final ServerConnect serverConnect;
+    private final DataProvider dataProvider;
 
     private String currentTitle = "", currentArtist = "", currentAlbum = "";
     private String colorMode;
@@ -28,8 +31,9 @@ public class ServerStatus implements Serializable, ResponseListener {
     private int currentColor;
     private int colorBrightness;
 
-    public ServerStatus(ServerConnect serverConnect) {
+    public ServerStatus(DataProvider dataProvider, ServerConnect serverConnect) {
         this.serverConnect = serverConnect;
+        this.dataProvider = dataProvider;
     }
 
     /**
@@ -126,6 +130,11 @@ public class ServerStatus implements Serializable, ResponseListener {
         for (StatusChangedListener listener : listenerList) {
             listener.serverStatusChanged(newSong);
         }
+    }
+
+    @Override
+    public void fileNotFound() {
+        dataProvider.fileNotFound();
     }
 
     /**

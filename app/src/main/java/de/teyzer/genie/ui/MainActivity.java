@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,6 +32,7 @@ import de.teyzer.genie.data.DataManager;
 import de.teyzer.genie.data.DataProvider;
 import de.teyzer.genie.data.MediaScanner;
 import de.teyzer.genie.data.Prefs;
+import de.teyzer.genie.ui.fragments.AbstractFragment;
 import de.teyzer.genie.ui.fragments.FoodListFragment;
 import de.teyzer.genie.ui.fragments.LightFragment;
 import de.teyzer.genie.ui.fragments.MusicFragment;
@@ -131,7 +134,26 @@ public class MainActivity extends AppCompatActivity
 
         serverConnect = new ServerConnect(this);
 
-        serverStatus = new ServerStatus(serverConnect);
+        serverStatus = new ServerStatus(this, serverConnect);
+    }
+
+    @Override
+    public void fileNotFound() {
+        AbstractFragment currentFragment = getCurrentFragment();
+
+        if (currentFragment != null && currentFragment.getMainLayout() != null) {
+            Snackbar.make(currentFragment.getMainLayout(), "Datei nicht gefunden", Snackbar.LENGTH_LONG).show();
+        }
+        MediaScanner.performSongScan(this, dataManager);
+
+        //Fragmente benachrichtigen
+        List<Fragment> list = getSupportFragmentManager().getFragments();
+
+        for (Fragment fragment : list) {
+            if (fragment instanceof AbstractFragment) {
+                ((AbstractFragment) fragment).dataSetChanged();
+            }
+        }
     }
 
     /**
@@ -219,11 +241,16 @@ public class MainActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             showFragment(R.id.action_settings);
 
             return true;
+        } else if (id == R.id.action_test) {
+            AbstractFragment currentFragment = getCurrentFragment();
+
+            if (currentFragment != null) {
+                Snackbar.make(currentFragment.getMainLayout(), "Testfehlermeldung", Snackbar.LENGTH_LONG).show();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -302,6 +329,25 @@ public class MainActivity extends AppCompatActivity
                     .addToBackStack(fragmentTag)
                     .commit();
         }
+    }
+
+    /**
+     * Sucht das aktuell Sichtbare Fragment heraus
+     *
+     * @return aktuelles Fragment
+     */
+    private AbstractFragment getCurrentFragment() {
+        List<Fragment> list = getSupportFragmentManager().getFragments();
+
+        for (Fragment fragment : list) {
+            if (fragment.isVisible()) {
+                try {
+                    return (AbstractFragment) fragment;
+                } catch (Exception ignored) {
+                }
+            }
+        }
+        return null;
     }
 
     @Override

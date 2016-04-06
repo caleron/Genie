@@ -3,6 +3,7 @@ package de.teyzer.genie.ui.fragments;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -40,6 +41,8 @@ public class MusicFragment extends AbstractFragment implements UploadStatusListe
     TabLayout tabLayout;
     @Bind(R.id.music_player_bar)
     PlayerBar playerBar;
+    @Bind(R.id.music_coordinator_layout)
+    CoordinatorLayout coordinatorLayout;
 
     private UploadStatusDialogFragment uploadStatusDialogFragment = null;
     private MusicTabPagerAdapter musicTabPagerAdapter;
@@ -174,6 +177,18 @@ public class MusicFragment extends AbstractFragment implements UploadStatusListe
                 uploadStatusDialogFragment.updateStatus(text, Math.max(progressPercent, 0));
             }
         }
+    }
+
+    @Override
+    public View getMainLayout() {
+        return coordinatorLayout;
+    }
+
+    @Override
+    public void dataSetChanged() {
+        musicTabPagerAdapter.titleListFrag.updateTracks(mListener.getDataManager().getTracks());
+        musicTabPagerAdapter.artistListFrag.updateArtists(mListener.getDataManager().getArtists());
+        musicTabPagerAdapter.albumListFrag.updateAlbums(mListener.getDataManager().getAlbums());
     }
 
     /**

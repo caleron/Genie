@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/frequency_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,6 +11,6 @@
         android:id="@+id/frequency_spectrogram"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="@dimen/small_padding"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:padding="@dimen/small_padding" />
 </LinearLayout>

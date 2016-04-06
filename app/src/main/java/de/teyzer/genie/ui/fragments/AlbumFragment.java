@@ -2,6 +2,7 @@ package de.teyzer.genie.ui.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -30,13 +31,22 @@ public class AlbumFragment extends AbstractFragment {
     RecyclerView trackListView;
     @Bind(R.id.album_player_bar)
     PlayerBar playerBar;
+    @Bind(R.id.album_coordinator_layout)
+    CoordinatorLayout coordinatorLayout;
 
     private UploadStatusListener listener;
 
     private Album displayAlbum;
     private ArrayList<Track> displayTracks;
+    private MusicAdapter adapter;
 
     public AlbumFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        adapter = new MusicAdapter();
     }
 
     @Override
@@ -55,7 +65,7 @@ public class AlbumFragment extends AbstractFragment {
         RecyclerView.LayoutManager mListLayoutManager = new LinearLayoutManager(getActivity());
         trackListView.setLayoutManager(mListLayoutManager);
 
-        trackListView.setAdapter(new MusicAdapter());
+        trackListView.setAdapter(adapter);
 
         return root;
     }
@@ -77,6 +87,16 @@ public class AlbumFragment extends AbstractFragment {
     public void onPause() {
         super.onPause();
         playerBar.destroyTimer();
+    }
+
+    @Override
+    public View getMainLayout() {
+        return coordinatorLayout;
+    }
+
+    @Override
+    public void dataSetChanged() {
+        adapter.notifyDataSetChanged();
     }
 
     /**

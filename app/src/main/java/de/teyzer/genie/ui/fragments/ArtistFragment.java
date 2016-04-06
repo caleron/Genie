@@ -1,6 +1,7 @@
 package de.teyzer.genie.ui.fragments;
 
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -34,13 +35,16 @@ public class ArtistFragment extends AbstractFragment {
     ViewPager viewPager;
     @Bind(R.id.tab_layout)
     TabLayout tabLayout;
+    @Bind(R.id.music_coordinator_layout)
+    CoordinatorLayout coordinatorLayout;
 
     private MusicTabPagerAdapter musicTabPagerAdapter;
     private Artist displayArtist;
     private UploadStatusListener listener;
     private MenuItem searchItem;
 
-    public ArtistFragment() {}
+    public ArtistFragment() {
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -119,6 +123,17 @@ public class ArtistFragment extends AbstractFragment {
     public void setArguments(UploadStatusListener listener, Artist artist) {
         this.listener = listener;
         displayArtist = artist;
+    }
+
+    @Override
+    public View getMainLayout() {
+        return coordinatorLayout;
+    }
+
+    @Override
+    public void dataSetChanged() {
+        musicTabPagerAdapter.titleListFrag.updateTracks(displayArtist.getAllTracks());
+        musicTabPagerAdapter.albumListFrag.updateAlbums(displayArtist.getAlbums());
     }
 
     /**

@@ -7,6 +7,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,6 +21,8 @@ public class ToolsFragment extends AbstractFragment {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
+    @Bind(R.id.tools_main_layout)
+    LinearLayout mainLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -77,9 +80,7 @@ public class ToolsFragment extends AbstractFragment {
     }
 
     @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        ButterKnife.unbind(this);
+    public View getMainLayout() {
+        return mainLayout;
     }
-
 }
