@@ -109,7 +109,7 @@ public class ServerStatus implements Serializable, ResponseListener {
                     break;
             }
         }
-        System.out.println("new play position: " + playPosition);
+        //System.out.println("new play position: " + playPosition);
         if (currentArtist.isEmpty() && oldArtist.isEmpty()) {
             //Falls der Dateiname als Titel herhalten musste, etwa wenn keine Tags vorhanden sind
             return currentTitle.equals(oldTitle);

@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -35,6 +36,8 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
 
     @Bind(R.id.light_white_seekbar)
     SeekBar lightWhiteSeekbar;
+    @Bind(R.id.light_color_brightness_seekbar)
+    SeekBar colorBrightnessSeekbar;
     @Bind(R.id.light_red_seekbar)
     SeekBar lightRedSeekbar;
     @Bind(R.id.light_green_seekbar)
@@ -99,6 +102,7 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
         lightColorPicker.setOnColorSelectedListener(this);
 
         lightWhiteSeekbar.setOnSeekBarChangeListener(this);
+        colorBrightnessSeekbar.setOnSeekBarChangeListener(this);
         lightRedSeekbar.setOnSeekBarChangeListener(this);
         lightGreenSeekbar.setOnSeekBarChangeListener(this);
         lightBlueSeekbar.setOnSeekBarChangeListener(this);
@@ -121,6 +125,7 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
             colorModeSpinner.setSelection(colorMode);
 
             lightWhiteSeekbar.setProgress(savedInstanceState.getInt("white"));
+            colorBrightnessSeekbar.setProgress(savedInstanceState.getInt("colorBrightness"));
             if (colorMode == 1) {
                 //RGB-Modus
                 lightRedSeekbar.setProgress(savedInstanceState.getInt("red"));
@@ -141,6 +146,7 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
 
             outState.putInt("colorMode", colorMode);
             outState.putInt("white", lightWhiteSeekbar.getProgress());
+            outState.putInt("colorBrightness", colorBrightnessSeekbar.getProgress());
 
             if (colorMode == 1) {
                 //Farbkanalmodus
@@ -171,13 +177,19 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
     @Override
     public void onColorChanged(int color, boolean fromUser) {
         //System.out.println("changed color = [" + color + "]    " + lightColorPicker.getColor());
-        if (suppressEvents ||!fromUser)
+        if (suppressEvents || !fromUser)
             return;
 
         suppressServerState = true;
+        handler.removeCallbacks(refreshRunnable);
+        handler.postDelayed(refreshRunnable, 1000);
+
         serverStatus.setRGBColor(color);
     }
 
+    /**
+     * Kann eigentlich nur vom User sein. Siehe {@link ColorPicker#onTouchEvent(MotionEvent)}
+     */
     @Override
     public void onColorSelected(int color, boolean fromUser) {
         //System.out.println("selected color = [" + color + "]" + "    " + lightColorPicker.getColor());
@@ -199,6 +211,9 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
         switch (seekBar.getId()) {
             case R.id.light_white_seekbar:
                 serverStatus.setWhiteBrightness(progress);
+                break;
+            case R.id.light_color_brightness_seekbar:
+                serverStatus.setColorBrightness(progress);
                 break;
             case R.id.light_red_seekbar:
             case R.id.light_green_seekbar:
@@ -228,8 +243,9 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
      */
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        suppressServerState = false;
-        serverStatusChanged(false);
+        handler.removeCallbacks(refreshRunnable);
+        handler.postDelayed(refreshRunnable, 1000);
+
     }
 
     /**
@@ -353,6 +369,7 @@ public class LightFragment extends AbstractFragment implements ColorPicker.OnCol
         }
 
         lightWhiteSeekbar.setProgress(serverStatus.getWhiteBrightness());
+        colorBrightnessSeekbar.setProgress(serverStatus.getColorBrightness());
     }
 
     @Override

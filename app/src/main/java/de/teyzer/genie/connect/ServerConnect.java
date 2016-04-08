@@ -26,6 +26,7 @@ public class ServerConnect implements Prefs {
     private Thread requestThread;
 
     private final Activity activity;
+    private long lastNoConnectionAlertTime;
 
     public ServerConnect(Activity activity) {
         this.activity = activity;
@@ -74,12 +75,18 @@ public class ServerConnect implements Prefs {
                     e.printStackTrace();
                 }
 
-                activity.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(activity, "Fehler: Verbindung fehlgeschlagen", Toast.LENGTH_SHORT).show();
-                    }
-                });
+                long currentTime = System.nanoTime();
+                final long timeout = 5000000000L; //entspricht 5 sekunden
+                if (lastNoConnectionAlertTime + timeout < currentTime) {
+                    lastNoConnectionAlertTime = currentTime;
+
+                    activity.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(activity, "Fehler: Verbindung fehlgeschlagen", Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
             }
         }
     }
@@ -112,7 +119,7 @@ public class ServerConnect implements Prefs {
             if (action != null) {
                 try {
                     action.execute(socket);
-                    System.out.println("action executed");
+                    //System.out.println("action executed");
                 } catch (SocketException e) {
                     //Verbindung trennen, neu aufbauen und ein zweites Mal die Aktion ausführen
                     try {
