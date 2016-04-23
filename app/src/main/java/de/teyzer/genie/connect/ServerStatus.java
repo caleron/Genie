@@ -173,6 +173,15 @@ public class ServerStatus implements Serializable, ResponseListener {
     }
 
     /**
+     * Setzt die Abspielposition
+     *
+     * @param position Die neue Position. Muss kleiner als {@link ServerStatus#getTrackLength()} sein
+     */
+    public void playFromPosition(int position) {
+        serverConnect.executeAction(Action.playFromPosition(position, this));
+    }
+
+    /**
      * Setzt den Farbmodus. Mögliche Werte: music, custom, colorCircle. Hat keine Auswirkung, falls
      * der Modus dadurch nicht geändert wird.
      *

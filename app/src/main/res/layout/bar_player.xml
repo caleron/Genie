@@ -11,29 +11,22 @@
         android:id="@+id/music_current_title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
+        android:ellipsize="marquee"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:marqueeRepeatLimit="marquee_forever"
+        android:padding="@dimen/small_padding"
+        android:scrollHorizontally="true"
+        android:singleLine="true"
         android:text="Titel"
-        android:textAlignment="center"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:textColor="@android:color/white" />
-
-    <TextView
-        android:id="@+id/music_current_artist_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/music_current_title_text"
-        android:layout_centerHorizontal="true"
-        android:text="Künstler"
-        android:textAlignment="center"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:textColor="@android:color/white" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <SeekBar
         android:id="@+id/music_current_progress_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/music_current_artist_text" />
+        android:layout_below="@+id/music_current_title_text" />
 
     <LinearLayout
         android:id="@+id/music_playback_button_bar"

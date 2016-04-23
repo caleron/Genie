@@ -17,6 +17,14 @@
         <item name="android:textColor">@color/darkTextColor</item>
     </style>
 
+    <style name="AppTheme.PrimaryTextDarkBack">
+        <item name="android:textColor">@color/primaryTextColorDarkBack</item>
+    </style>
+
+    <style name="AppTheme.SecondaryTextDarkBack">
+        <item name="android:textColor">@color/secondaryTextColorDarkBack</item>
+    </style>
+
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

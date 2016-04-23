@@ -58,6 +58,10 @@ public class Action {
         return new Action("", null, listener);//TODO mach das
     }
 
+    public static Action playFromPosition(int position, ResponseListener listener) {
+        return new Action("playFromPosition", new String[]{String.valueOf(position)}, listener);
+    }
+
     public static Action setShuffle(boolean shuffle, ResponseListener listener) {
         return new Action("setShuffle", new String[]{String.valueOf(shuffle)}, listener);
     }

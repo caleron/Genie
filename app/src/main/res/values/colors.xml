@@ -5,4 +5,6 @@
     <color name="colorAccent">#ff6e40</color>
     <color name="darkTextColor">#202020</color>
     <color name="secondaryTextColor">#737373</color>
+    <color name="primaryTextColorDarkBack">#ffffffff</color>
+    <color name="secondaryTextColorDarkBack">#b3ffffff</color>
 </resources>

@@ -2,6 +2,9 @@ package de.teyzer.genie.ui.custom;
 
 import android.content.Context;
 import android.os.CountDownTimer;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.style.TextAppearanceSpan;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,7 +21,7 @@ import de.teyzer.genie.connect.ServerStatus;
 import de.teyzer.genie.connect.StatusChangedListener;
 import de.teyzer.genie.data.DataProvider;
 
-public class PlayerBar extends RelativeLayout implements StatusChangedListener {
+public class PlayerBar extends RelativeLayout implements StatusChangedListener, SeekBar.OnSeekBarChangeListener {
 
     @Bind(R.id.music_shuffle_btn)
     ImageButton musicShuffleBtn;
@@ -28,8 +31,8 @@ public class PlayerBar extends RelativeLayout implements StatusChangedListener {
     ImageButton musicRepeatBtn;
     @Bind(R.id.music_current_title_text)
     TextView musicCurrentTitleText;
-    @Bind(R.id.music_current_artist_text)
-    TextView musicCurrentArtistText;
+    //@Bind(R.id.music_current_artist_text)
+    //TextView musicCurrentArtistText;
     @Bind(R.id.music_current_progress_bar)
     SeekBar musicCurrentSeekBar;
 
@@ -57,18 +60,21 @@ public class PlayerBar extends RelativeLayout implements StatusChangedListener {
         inflater.inflate(R.layout.bar_player, this, true);
 
         ButterKnife.bind(this);
+
+        musicCurrentSeekBar.setOnSeekBarChangeListener(this);
     }
 
     public void setDataProvider(DataProvider dataProvider) {
         this.serverStatus = dataProvider.getServerStatus();
         serverStatus.addStatusChangedListener(this);
+        refreshCurrentPlayingTexts();
     }
 
     /**
      * Fordert einen neuen Serverstatus an
      */
     public void requestStatusRefresh() {
-        if (serverStatus != null) {
+        if (serverStatus != null && isShown()) {
             serverStatus.requestNewStatus();
         }
     }
@@ -179,8 +185,18 @@ public class PlayerBar extends RelativeLayout implements StatusChangedListener {
      * Setzt Titel und Interpret
      */
     private void refreshCurrentPlayingTexts() {
-        musicCurrentArtistText.setText(serverStatus.getCurrentArtist());
-        musicCurrentTitleText.setText(serverStatus.getCurrentTitle());
+        //musicCurrentArtistText.setText(serverStatus.getCurrentArtist());
+        String title = serverStatus.getCurrentTitle();
+        String artist = serverStatus.getCurrentArtist();
+        SpannableString text = new SpannableString(title + " - " + artist);
+
+        text.setSpan(new TextAppearanceSpan(getContext(), R.style.AppTheme_PrimaryTextDarkBack),
+                0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        text.setSpan(new TextAppearanceSpan(getContext(), R.style.AppTheme_SecondaryTextDarkBack),
+                title.length(), text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+
+        musicCurrentTitleText.setText(text, TextView.BufferType.SPANNABLE);
     }
 
     /**
@@ -236,6 +252,30 @@ public class PlayerBar extends RelativeLayout implements StatusChangedListener {
             imageResource = R.drawable.ic_repeat_deep_orange_a200_36dp;
         }
         musicRepeatBtn.setImageResource(imageResource);
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        //uninteressant
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        //auch egal
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        //neue Position an Server senden
+        if (serverStatus != null) {
+            int position = seekBar.getProgress();
+
+            if (playProgressTimer != null) {
+                playProgressTimer.cancel();
+                playProgressTimer = null;
+            }
+            serverStatus.playFromPosition(position);
+        }
     }
 
 
