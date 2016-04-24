@@ -5,6 +5,11 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
@@ -61,6 +66,9 @@ public class ServerConnect implements Prefs {
         }
     }
 
+    /**
+     * Verbindet sich mit dem Serversocket von Awaker auf dem Raspberry.
+     */
     private void connect() {
         if (socket == null || !socket.isConnected() || socket.isClosed()) {
             try {
@@ -158,6 +166,25 @@ public class ServerConnect implements Prefs {
             }
             taskQueue.clear();
         } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void startServer() {
+        JSch jSch = new JSch();
+
+        try {
+            Session session = jSch.getSession("pi", hostIp);
+            session.setPassword("raspberry");
+            session.connect();
+
+            ChannelExec channel = (ChannelExec) session.openChannel("exec");
+            channel.setCommand("bash start");
+            channel.connect();
+
+            channel.disconnect();
+            session.disconnect();
+        } catch (JSchException e) {
             e.printStackTrace();
         }
 
