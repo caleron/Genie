@@ -30,7 +30,7 @@ public class PlayerBar extends RelativeLayout implements StatusChangedListener, 
     @Bind(R.id.music_repeat_btn)
     ImageButton musicRepeatBtn;
     @Bind(R.id.music_current_title_text)
-    TextView musicCurrentTitleText;
+    MarqueeTextView musicCurrentTitleText;
     //@Bind(R.id.music_current_artist_text)
     //TextView musicCurrentArtistText;
     @Bind(R.id.music_current_progress_bar)

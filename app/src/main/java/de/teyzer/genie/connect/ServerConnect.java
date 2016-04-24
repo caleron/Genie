@@ -5,11 +5,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.widget.Toast;
 
-import com.jcraft.jsch.ChannelExec;
-import com.jcraft.jsch.JSch;
-import com.jcraft.jsch.JSchException;
-import com.jcraft.jsch.Session;
-
 import java.io.IOException;
 import java.net.ConnectException;
 import java.net.Socket;
@@ -169,17 +164,37 @@ public class ServerConnect implements Prefs {
             e.printStackTrace();
         }
     }
-
+/*
     public void startServer() {
+
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            //Auf neuem Thread ausführen, falls dies der UI-Thread ist
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    startServer();
+                }
+            }).start();
+            return;
+        }
+
         JSch jSch = new JSch();
 
         try {
             Session session = jSch.getSession("pi", hostIp);
             session.setPassword("raspberry");
+
+            Properties config = new Properties();
+            config.put("StrictHostKeyChecking", "no");
+            session.setConfig(config);
+            session.setOutputStream(System.out);
             session.connect();
+
 
             ChannelExec channel = (ChannelExec) session.openChannel("exec");
             channel.setCommand("bash start");
+            channel.setOutputStream(System.out);
+            channel.setErrStream(System.err);
             channel.connect();
 
             channel.disconnect();
@@ -188,5 +203,5 @@ public class ServerConnect implements Prefs {
             e.printStackTrace();
         }
 
-    }
+    }*/
 }

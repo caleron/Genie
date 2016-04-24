@@ -60,9 +60,9 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        initGui(savedInstanceState);
-
         initDataManager();
+
+        initGui(savedInstanceState);
 
         checkIntent(getIntent());
 

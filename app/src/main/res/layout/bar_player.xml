@@ -7,7 +7,7 @@
     android:background="@color/colorPrimaryDark"
     tools:showIn="@layout/fragment_music">
 
-    <TextView
+    <de.teyzer.genie.ui.custom.MarqueeTextView
         android:id="@+id/music_current_title_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -17,9 +17,7 @@
         android:focusableInTouchMode="true"
         android:marqueeRepeatLimit="marquee_forever"
         android:padding="@dimen/small_padding"
-        android:scrollHorizontally="true"
         android:singleLine="true"
-        android:text="Titel"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <SeekBar
