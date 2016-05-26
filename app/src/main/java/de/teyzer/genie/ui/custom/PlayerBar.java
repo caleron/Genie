@@ -190,8 +190,10 @@ public class PlayerBar extends RelativeLayout implements StatusChangedListener, 
         String artist = serverStatus.getCurrentArtist();
         SpannableString text = new SpannableString(title + " - " + artist);
 
-        text.setSpan(new TextAppearanceSpan(getContext(), R.style.AppTheme_PrimaryTextDarkBack),
-                0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        if (title.length() > 0) {
+            text.setSpan(new TextAppearanceSpan(getContext(), R.style.AppTheme_PrimaryTextDarkBack),
+                    0, title.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        }
 
         text.setSpan(new TextAppearanceSpan(getContext(), R.style.AppTheme_SecondaryTextDarkBack),
                 title.length(), text.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);

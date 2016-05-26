@@ -2,6 +2,7 @@ package de.teyzer.genie.ui.fragments;
 
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -44,6 +45,10 @@ public class MusicListFragment extends AbstractFragment {
     private ArrayList<Album> allAlbums;
     private boolean searchMode;
 
+    public MusicListFragment() {
+        musicAdapter = new MusicAdapter();
+    }
+
     public void setTrackMode(UploadStatusListener parentFragment, ArrayList<Track> tracks) {
         this.listener = parentFragment;
         this.displayMode = MODE_TITLE;
@@ -70,7 +75,7 @@ public class MusicListFragment extends AbstractFragment {
         if (!searchMode) {
             displayTracks = tracks;
         }
-        musicAdapter.notifyDataSetChanged();
+        musicAdapter.update();
     }
 
     public void updateAlbums(ArrayList<Album> albums) {
@@ -78,7 +83,7 @@ public class MusicListFragment extends AbstractFragment {
         if (!searchMode) {
             displayAlbums = albums;
         }
-        musicAdapter.notifyDataSetChanged();
+        musicAdapter.update();
     }
 
     public void updateArtists(ArrayList<Artist> artists) {
@@ -86,7 +91,7 @@ public class MusicListFragment extends AbstractFragment {
         if (!searchMode) {
             displayArtists = artists;
         }
-        musicAdapter.notifyDataSetChanged();
+        musicAdapter.update();
     }
 
     @Override
@@ -94,7 +99,6 @@ public class MusicListFragment extends AbstractFragment {
         super.onCreate(savedInstanceState);
         //Einmalige Sachen müssen in onCreate gemacht werden, da onCreateView jedes Mal neu ausgeführt
         //wird, nachdem das Fragment im Hintegrund war
-        musicAdapter = new MusicAdapter();
     }
 
     @Override
@@ -190,7 +194,7 @@ public class MusicListFragment extends AbstractFragment {
             displayTracks = allTracks;
             displayAlbums = allAlbums;
             displayArtists = allArtists;
-            musicAdapter.notifyDataSetChanged();
+            musicAdapter.update();
         }
     }
 
@@ -206,7 +210,7 @@ public class MusicListFragment extends AbstractFragment {
                 displayArtists = findArtists(text);
                 break;
         }
-        musicAdapter.notifyDataSetChanged();
+        musicAdapter.update();
     }
 
     @Override
@@ -266,6 +270,22 @@ public class MusicListFragment extends AbstractFragment {
                 default:
                     Log.e(this.toString(), "Incorrect display mode = " + displayMode);
                     return 0;
+            }
+        }
+
+        public void update() {
+            if (trackListView == null)
+                return;
+
+            if (Looper.myLooper() != Looper.getMainLooper()) {
+                trackListView.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        notifyDataSetChanged();
+                    }
+                });
+            } else {
+                notifyDataSetChanged();
             }
         }
     }

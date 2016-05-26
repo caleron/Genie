@@ -58,11 +58,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     protected void onCreate(Bundle savedInstanceState) {
+        initDataManager();
         super.onCreate(savedInstanceState);
 
-        initDataManager();
-
-        initGui(savedInstanceState);
+        initGui();
 
         checkIntent(getIntent());
 
@@ -73,10 +72,8 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Initialisiert die GUI
-     *
-     * @param savedInstanceState Vorher gespeicherter Zustand
      */
-    private void initGui(Bundle savedInstanceState) {
+    private void initGui() {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
@@ -107,7 +104,9 @@ public class MainActivity extends AppCompatActivity
         drawerLayout.removeDrawerListener(lastActionBarDrawerToggle);
 
         if (useBackButton) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
             toolbar.setNavigationOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

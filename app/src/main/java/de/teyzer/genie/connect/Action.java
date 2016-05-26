@@ -162,7 +162,9 @@ public class Action {
                     mmr.setDataSource(fileUri.getPath());
                 } catch (IllegalArgumentException ex) {
                     //Falls die Datei nicht mehr existiert
-                    listener.fileNotFound();
+                    if (listener != null) {
+                        listener.fileNotFound();
+                    }
                 }
 
                 String artist = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_ARTIST);
